@@ -22,7 +22,11 @@ export const initState = {
   [cacheKeySymbol]: ''
 }
 
-export const configure = (custom?: ReactUseApi.CustomSettings) => {
+export const configure = (context: ReactUseApi.CustomContext) => {
+  if (context.$isConfigured) {
+    return context as ReactUseApi.Context
+  }
+  const { settings: custom } = context
   const settings = { ...defaultSettings }
   if (isObject(custom)) {
     Object.keys(custom).forEach((key: keyof ReactUseApi.Settings) => {
@@ -35,7 +39,9 @@ export const configure = (custom?: ReactUseApi.CustomSettings) => {
   }
   settings.cache =
     settings.cache || new LRU<string, ReactUseApi.CacheData | any>()
-  return settings as ReactUseApi.Settings
+  context.isSSR = isFunction(settings.isSSR) ? settings.isSSR() : false
+  context.$isConfigured = true
+  return context as ReactUseApi.Context
 }
 
 export async function axiosAll(

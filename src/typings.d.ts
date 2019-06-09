@@ -31,6 +31,7 @@ declare namespace ReactUseApi {
       renderSSR?: ReactUseApi.Settings['renderSSR']
     ): Promise<string>
     loadApiCache?(): void
+    $isConfigured?: boolean
   }
   interface CustomContext extends Omit<Context, 'settings'> {
     settings?: CustomSettings

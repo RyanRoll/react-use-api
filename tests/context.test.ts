@@ -1,8 +1,7 @@
 /// <reference path="../src/typings.d.ts" />
 
-import { defaultSettings } from '../src/common'
+import { defaultSettings, configure } from '../src/common'
 import { injectSSRHtml, loadApiCache } from '../src/ssr'
-import { createContextData } from '../src/context'
 
 jest.mock('../src/ssr', () => {
   const ssr = jest.requireActual('../src/ssr')
@@ -13,10 +12,10 @@ jest.mock('../src/ssr', () => {
   }
 })
 
-describe('createContextData tests', () => {
-  it('should createContextData work well', () => {
+describe('configure tests', () => {
+  it('should configure work well', () => {
     const context = {}
-    const mutatedContext = createContextData(context)
+    const mutatedContext = configure(context)
     expect(mutatedContext.isSSR).toBe(false)
     expect(mutatedContext.injectSSRHtml).toBeTruthy()
     expect(mutatedContext.loadApiCache).toBeTruthy()
@@ -28,13 +27,13 @@ describe('createContextData tests', () => {
     mutatedContext.settings.cache = null // try to make equal
     expect(mutatedContext.settings).toEqual(defaultSettings)
   })
-  it('should createContextData work well with custom isSSR()', () => {
+  it('should configure work well with custom isSSR()', () => {
     const context = {
       settings: {
         isSSR: jest.fn().mockReturnValue(true)
       }
     }
-    const mutatedContext = createContextData(context)
+    const mutatedContext = configure(context)
     expect(context.settings.isSSR).toHaveBeenCalled()
     expect(mutatedContext.isSSR).toBe(true)
     expect(mutatedContext.injectSSRHtml).toBeTruthy()

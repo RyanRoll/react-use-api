@@ -1,4 +1,4 @@
-import { axiosAll } from './common'
+import { configure, axiosAll, defaultSettings } from './common'
 
 export const feedRequests = async (
   context: ReactUseApi.Context,
@@ -46,14 +46,15 @@ export const feedRequests = async (
 }
 
 export const injectSSRHtml = async (
-  context: ReactUseApi.Context,
+  context: ReactUseApi.CustomContext,
   renderSSR?: ReactUseApi.Settings['renderSSR']
 ) => {
-  // collect axios calls first
+  context = configure(context)
   const { settings } = context
   settings.renderSSR = renderSSR || settings.renderSSR
   const { cache, clientCacheVar } = settings
   cache.reset()
+  // collect axios calls first
   let ssrHtml = settings.renderSSR()
   ssrHtml = await (exports.feedRequests || feedRequests)(context, ssrHtml)
   const cacheJson = cache.dump()
@@ -63,7 +64,9 @@ export const injectSSRHtml = async (
   return ssrHtml + axiosHooksScript
 }
 
-export const loadApiCache = (context: ReactUseApi.Context) => {
+export const loadApiCache = (
+  context: ReactUseApi.Context = { settings: defaultSettings }
+) => {
   const { settings } = context
   const { clientCacheVar, deleteAfterLoading } = settings
   const data = window[clientCacheVar]

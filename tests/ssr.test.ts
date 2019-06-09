@@ -1,6 +1,6 @@
 /// <reference path="../src/typings.d.ts" />
 
-import { axiosAll, configure } from '../src/common'
+import { configure, defaultSettings } from '../src/common'
 // import { feedRequests, injectSSRHtml, loadApiCache } from '../src/ssr'
 
 jest.mock('../src/common', () => {
@@ -24,11 +24,11 @@ describe('injectSSRHtml tests', () => {
     .mockResolvedValue(html)
   it.only('should injectSSRHtml well with settings.renderSSR', async () => {
     const renderSSR = jest.fn().mockReturnValue(html)
-    const settings = configure()
+    const context = configure({
+      settings: defaultSettings
+    })
+    const { settings } = context
     const { cache } = settings
-    const context = {
-      settings
-    }
     settings.renderSSR = renderSSR
     cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
     expect.hasAssertions()

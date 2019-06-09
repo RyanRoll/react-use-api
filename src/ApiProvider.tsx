@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react'
 
-import { ApiContext, createContextData } from './context'
+import { ApiContext } from './context'
+import { configure } from './common'
 
 export const ApiProvider: React.FC<ReactUseApi.ApiProviderProps> = ({
   context = {},
   children
 }) => {
-  const apiContext = useMemo(() => createContextData(context), [context])
+  const apiContext = useMemo(() => configure(context), [context])
   return (
     <ApiContext.Provider value={apiContext}>{children}</ApiContext.Provider>
   )
