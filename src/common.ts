@@ -39,8 +39,11 @@ export const configure = (context: ReactUseApi.CustomContext) => {
   }
   settings.cache =
     settings.cache || new LRU<string, ReactUseApi.CacheData | any>()
-  context.isSSR = isFunction(settings.isSSR) ? settings.isSSR() : false
-  context.$isConfigured = true
+  Object.assign(context, {
+    settings,
+    isSSR: isFunction(settings.isSSR) ? settings.isSSR() : false,
+    $isConfigured: true
+  })
   return context as ReactUseApi.Context
 }
 
