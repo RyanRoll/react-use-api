@@ -1,0 +1,81 @@
+{
+  "name": "react-use-api",
+  "version": "0.0.1-beta",
+  "license": "MIT",
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "prepublishOnly": "yarn build",
+    "build": "yarn build:clear && tsc && yarn build:copy",
+    "build:clear": "shx rm -rf build",
+    "build:copy": "shx cp src/*.d.ts build",
+    "test": "node scripts/test.js"
+  },
+  "dependencies": {
+    "lru-cache": "^5.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.4.3",
+    "@types/axios-mock-adapter": "^1.10.0",
+    "@types/jest": "24.0.13",
+    "@types/lru-cache": "^5.1.0",
+    "@types/node": "12.0.1",
+    "@types/react": "16.8.19",
+    "@types/react-dom": "16.8.4",
+    "@types/react-test-renderer": "^16.8.1",
+    "@typescript-eslint/eslint-plugin": "1.6.0",
+    "@typescript-eslint/parser": "1.6.0",
+    "axios": "^0.18.0",
+    "axios-mock-adapter": "^1.16.0",
+    "babel-jest": "^24.8.0",
+    "babel-preset-react-app": "^9.0.0",
+    "camelcase": "^5.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-react-app": "^4.0.1",
+    "eslint-loader": "2.1.2",
+    "eslint-plugin-flowtype": "2.50.1",
+    "eslint-plugin-import": "2.16.0",
+    "eslint-plugin-jsx-a11y": "6.2.1",
+    "eslint-plugin-react": "7.12.4",
+    "eslint-plugin-react-hooks": "^1.5.0",
+    "identity-obj-proxy": "3.0.0",
+    "jest": "24.7.1",
+    "jest-environment-jsdom-fourteen": "0.1.0",
+    "jest-resolve": "24.7.1",
+    "jest-watch-typeahead": "0.3.0",
+    "react": "^16.8.6",
+    "react-app-polyfill": "^1.0.1",
+    "react-dom": "^16.8.6",
+    "react-hooks-testing-library": "^0.5.0",
+    "react-test-renderer": "^16.8.6",
+    "shx": "^0.3.2",
+    "typescript": "^3.5.1"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "peerDependencies": {
+    "axios": "^0.18.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  }
+}
