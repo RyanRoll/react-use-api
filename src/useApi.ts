@@ -133,7 +133,7 @@ export const fetchApi = async (
     if (response) {
       cache.del(cacheKey)
     } else {
-      withLoading && dispatch({ type: ACTIONS.REQUEST_START })
+      withLoading && dispatch({ type: ACTIONS.REQUEST_START, options })
       response = await axiosAll(context, config)
     }
     dispatch({ type: ACTIONS.REQUEST_END, response, error, options })
