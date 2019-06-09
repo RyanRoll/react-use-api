@@ -67,7 +67,7 @@ export const useApi = (
     metrics.refreshFlag = Date.now()
   }
   useEffect(() => {
-    const isFeeding = cache.set(feedKey, true)
+    const isFeeding = cache.get(feedKey)
     // For SSR: never invoke request() if
     // 1. There is a cacheData for the cacheKey
     // 2. Feeding the data come from the cache
