@@ -79,8 +79,10 @@ export async function axiosAll(
 
 // for cache
 export const tidyResponse = (response: ReactUseApi.ApiResponse) => {
-  delete response.config
-  delete response.request
+  if (response) {
+    delete response.config
+    delete response.request
+  }
   return response
 }
 

@@ -31,7 +31,8 @@ export const feedRequests = async (
       // is an axios error
       if (error.response && error.response.data) {
         cache.set(cacheKey, {
-          error
+          // should not be error (Error) object in SSR, it will lead an error: Converting circular structure to JSON
+          error: error.response
         })
       } else {
         throw error
