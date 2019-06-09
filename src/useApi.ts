@@ -22,7 +22,8 @@ export const useApi = (
   }
   const context = useContext(ApiContext)
   const {
-    settings: { isSSR, cache, debug },
+    settings: { cache, debug },
+    isSSR,
     ssrConfigs
   } = context
   const cacheKey = JSON.stringify(config)
