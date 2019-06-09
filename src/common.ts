@@ -3,7 +3,7 @@ import LRU from 'lru-cache'
 
 export const cacheKeySymbol: unique symbol = Symbol('cacheKey')
 export const defaultSettings = {
-  cache: null as LRU<string, ReactUseApi.CacheData | any>,
+  cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
   clientCacheVar: '__USE_API_CACHE__',
   maxRequests: 50,
@@ -37,8 +37,6 @@ export const configure = (context: ReactUseApi.CustomContext) => {
       }
     })
   }
-  settings.cache =
-    settings.cache || new LRU<string, ReactUseApi.CacheData | any>()
   Object.assign(context, {
     settings,
     ssrConfigs: [],
