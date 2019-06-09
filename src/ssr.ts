@@ -7,9 +7,7 @@ export const feedRequests = async (
 ) => {
   const { settings, ssrConfigs } = context
   const { cache, renderSSR, debug } = settings
-  const currentConfigs = ssrConfigs
-  ssrConfigs.length = 0
-  if (!currentConfigs.length) {
+  if (!ssrConfigs.length) {
     debug &&
       console.log(
         '[ReactUseApi][Executed times] =',
@@ -20,7 +18,7 @@ export const feedRequests = async (
   if (maxRequests === 0) {
     throw new Error('Maximum executing times while fetching axios requests')
   }
-  const { config, cacheKey } = currentConfigs[0] // fetch the first
+  const { config, cacheKey } = ssrConfigs[0] // fetch the first
   const cacheData = cache.get(cacheKey)
   if (!cacheData) {
     try {
@@ -41,6 +39,7 @@ export const feedRequests = async (
     }
   }
   // execute renderSSR one after another to get more ssrConfigs
+  ssrConfigs.length = 0
   ssrHtml = renderSSR()
   return await feedRequests(context, ssrHtml, --maxRequests)
 }
