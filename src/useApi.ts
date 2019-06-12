@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useMemo, useContext } from 'react'
+import { useEffect, useReducer, useMemo, useContext, useCallback } from 'react'
 
 import { ApiContext } from './context'
 import {
@@ -7,8 +7,7 @@ import {
   axiosAll,
   getResponseData,
   isObject,
-  isFunction,
-  cacheKeySymbol
+  isFunction
 } from './common'
 
 export const useApi = (
@@ -29,8 +28,15 @@ export const useApi = (
   const cacheKey = JSON.stringify(config)
   const options = handleUseApiOptions(opt, cacheKey, context)
   let [state, dispatch] = useReducer(reducer, initState)
-  const request = async (cfg = config as ReactUseApi.Config) =>
-    fetchApi(context, cfg, options, dispatch)
+  const request = useCallback(
+    async (cfg = config as ReactUseApi.Config) => {
+      // update state's cachekey for saving the prevState when requesting (refreshing)
+      state.$cacheKey = cacheKey
+      return fetchApi(context, cfg, options, dispatch)
+    },
+    [context, config, options, dispatch, state]
+  )
+
   const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
   const feedKey = `feed:${cacheKey}`
   if (cacheData) {
@@ -87,12 +93,12 @@ export const reducer = (
   const { type, options } = action
   switch (type) {
     case ACTIONS.REQUEST_START: {
-      const cacheKey = options[cacheKeySymbol]
+      const cacheKey = options.$cacheKey
       return {
         // reset the state to initState if the cacheKey is changed on the fly
-        ...(cacheKey !== state[cacheKeySymbol] ? initState : state),
+        ...(cacheKey !== state.$cacheKey ? initState : state),
         loading: true,
-        [cacheKeySymbol]: cacheKey
+        $cacheKey: cacheKey
       }
     }
     case ACTIONS.REQUEST_END: {
@@ -126,7 +132,7 @@ export const fetchApi = async (
     settings: { cache }
   } = context
   const { withLoading } = options
-  const cacheKey = options[cacheKeySymbol]
+  const cacheKey = options.$cacheKey
   try {
     let { response, error } =
       cache.get(cacheKey) || ({} as ReactUseApi.CacheData)
@@ -160,7 +166,7 @@ export const handleUseApiOptions = (
         shouldRequest: undefined,
         dependencies: undefined
       } as ReactUseApi.Options)
-  options[cacheKeySymbol] = cacheKey
+  options.$cacheKey = cacheKey
   return options
 }
 

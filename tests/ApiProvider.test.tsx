@@ -20,28 +20,24 @@ describe('ApiProvider tests', () => {
         <App />
       </ApiProvider>
     )
-    const { settings, isSSR, injectSSRHtml, loadApiCache } = context
+    const { settings, isSSR } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
       cache: new LRU()
     })
     expect(isSSR).toBe(false) // window exists in jest
-    expect(injectSSRHtml).toBeDefined()
-    expect(loadApiCache).toBeDefined()
   })
   it('should context work as expected ', () => {
     const context: ReactUseApi.Context = {}
     const testRenderer = TestRenderer.create(<ApiProvider context={context} />)
     const { root } = testRenderer
     const instance = root.findByType(ApiProvider)
-    const { settings, isSSR, injectSSRHtml, loadApiCache } = context
+    const { settings, isSSR } = context
     expect(instance.props.context).toBe(context)
     expect(settings).toMatchObject({
       ...defaultSettings,
       cache: new LRU()
     })
     expect(isSSR).toBe(false) // window exists in jest
-    expect(injectSSRHtml).toBeDefined()
-    expect(loadApiCache).toBeDefined()
   })
 })

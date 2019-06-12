@@ -14,41 +14,53 @@ import {
   isFunction,
   isNil
 } from '../src/common'
-import { createContextData } from '../src/context'
 
 const noop = function() {}
 
 describe('configure tests', () => {
   it('should configure work without custom settings', () => {
-    const settings = configure()
+    const context = configure({})
+    const { settings, ssrConfigs, isSSR, $isConfigured } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
       cache: new LRU()
     })
-    expect(settings).not.toBe(defaultSettings)
+    expect(ssrConfigs).toEqual([])
+    expect(typeof isSSR).toBe('boolean')
+    expect($isConfigured).toBe(true)
   })
   it('should configure work with custom settings', () => {
+    const customSSRConfig = []
     const custom = {
-      clientCacheVar: '__FOO_BAR__',
-      axios: axios.create(),
-      cache: new LRU<string, ReactUseApi.CacheData>(),
-      maxRequests: 100,
-      renderSSR: noop,
-      isSSR: noop,
-      deleteAfterLoading: false
+      settings: {
+        clientCacheVar: '__FOO_BAR__',
+        axios: axios.create(),
+        cache: new LRU<string, ReactUseApi.CacheData>(),
+        maxRequests: 100,
+        renderSSR: noop,
+        isSSR: noop,
+        deleteAfterLoading: false
+      },
+      ssrConfigs: customSSRConfig,
+      isSSR: true,
+      $isConfigured: false
     }
-    const settings = configure(custom)
+    const context = configure(custom)
+    const { settings, ssrConfigs, isSSR, $isConfigured } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
-      ...custom
+      ...custom.settings
     })
     expect(settings).not.toBe(defaultSettings)
+    expect(ssrConfigs).not.toBe(customSSRConfig)
+    expect(isSSR).toBe(false)
+    expect($isConfigured).toBe(true)
   })
 })
 
 describe('axiosAll tests', () => {
   const mock = new MockAdapter(axios)
-  const context = createContextData({})
+  const context = configure({})
   const url = '/foo'
   const data = {
     foo: 'bar'
@@ -132,7 +144,8 @@ describe('getResponseData tests', () => {
         statusText: 'ok',
         headers: {}
       },
-      loading: false
+      loading: false,
+      $cacheKey: 'foo/bar'
     }
     const returnedData = getResponseData(options, state)
     expect(options.handleData).toHaveBeenLastCalledWith(data, state)
@@ -167,7 +180,8 @@ describe('getResponseData tests', () => {
         statusText: 'ok',
         headers: {}
       },
-      loading: false
+      loading: false,
+      $cacheKey: 'foo/bar'
     }
     const returnedData = getResponseData(options, state)
     expect(options.handleData).toHaveBeenLastCalledWith(data, state)

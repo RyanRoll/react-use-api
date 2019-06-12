@@ -1,7 +1,6 @@
 /// <reference path="../src/typings.d.ts" />
 
 import { configure, defaultSettings } from '../src/common'
-// import { feedRequests, injectSSRHtml, loadApiCache } from '../src/ssr'
 
 jest.mock('../src/common', () => {
   const common = jest.requireActual('../src/common')
@@ -25,17 +24,24 @@ describe('injectSSRHtml tests', () => {
   it.only('should injectSSRHtml well with settings.renderSSR', async () => {
     const renderSSR = jest.fn().mockReturnValue(html)
     const context = configure({
-      settings: defaultSettings
+      settings: {
+        ...defaultSettings,
+        renderSSR
+      }
     })
     const { settings } = context
     const { cache } = settings
-    settings.renderSSR = renderSSR
+    cache.reset = jest.fn()
     cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
     expect.hasAssertions()
     try {
       const ssrHtml = await injectSSRHtml(context)
       expect(renderSSR).toHaveBeenCalled()
+      expect(cache.reset).toHaveBeenCalled()
       expect(feedRequests).toHaveBeenLastCalledWith(context, html)
+      expect(ssrHtml).toEqual(
+        `${html}<script>window.__USE_API_CACHE__ = {"foo":"bar"}</script>`
+      )
     } catch (e) {
       // pass
       console.log(e)

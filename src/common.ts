@@ -1,7 +1,7 @@
 import axios, { AxiosStatic, AxiosInstance, AxiosError } from 'axios'
 import LRU from 'lru-cache'
 
-export const cacheKeySymbol: unique symbol = Symbol('cacheKey')
+// export const cacheKeySymbol: unique symbol = Symbol('cacheKey') TS still not friendly to symbol...
 export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
@@ -19,7 +19,7 @@ export const ACTIONS = {
 }
 export const initState = {
   loading: false,
-  [cacheKeySymbol]: ''
+  $cacheKey: ''
 }
 
 export const configure = (context: ReactUseApi.CustomContext) => {
@@ -40,7 +40,7 @@ export const configure = (context: ReactUseApi.CustomContext) => {
   Object.assign(context, {
     settings,
     ssrConfigs: [],
-    isSSR: isFunction(settings.isSSR) ? settings.isSSR() : false,
+    isSSR: isFunction(settings.isSSR) ? !!settings.isSSR() : false,
     $isConfigured: true
   })
   return context as ReactUseApi.Context
@@ -72,8 +72,11 @@ export async function axiosAll(
     return response
   } catch (error) {
     const { response } = error as ReactUseApi.CacheData['error']
-    tidyResponse(response)
-    throw error as AxiosError
+    if (response) {
+      tidyResponse(response)
+      throw error as AxiosError
+    }
+    throw error
   }
 }
 

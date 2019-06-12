@@ -27,10 +27,6 @@ declare namespace ReactUseApi {
     renderSSR?: Settings['renderSSR']
     isSSR?: boolean
     withLoading?: boolean
-    injectSSRHtml?(
-      renderSSR?: ReactUseApi.Settings['renderSSR']
-    ): Promise<string>
-    loadApiCache?(): void
     $isConfigured?: boolean
   }
   interface CustomContext extends Omit<Context, 'settings'> {
@@ -42,7 +38,7 @@ declare namespace ReactUseApi {
     withLoading?: boolean
     shouldRequest?: () => boolean | void
     dependencies?: dependencies
-    [Symbol('cacheKey')]?: string
+    $cacheKey?: string
   }
   interface dependencies {
     readonly [key: string]: any
