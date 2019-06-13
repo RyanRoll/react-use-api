@@ -7,7 +7,7 @@ export const defaultSettings = {
   axios: axios as AxiosStatic | AxiosInstance,
   clientCacheVar: '__USE_API_CACHE__',
   maxRequests: 50,
-  withLoading: false,
+  withLoading: true,
   deleteAfterLoading: true,
   renderSSR: (() => '') as Function,
   isSSR: (() => typeof window === 'undefined') as Function,

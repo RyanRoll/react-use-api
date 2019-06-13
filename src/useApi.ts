@@ -29,9 +29,11 @@ export const useApi = (
   const options = handleUseApiOptions(opt, cacheKey, context)
   let [state, dispatch] = useReducer(reducer, initState)
   const request = useCallback(
-    async (cfg = config as ReactUseApi.Config) => {
+    async (cfg = config as ReactUseApi.Config, keepState = false) => {
       // update state's cachekey for saving the prevState when requesting (refreshing)
-      state.$cacheKey = cacheKey
+      if (keepState) {
+        state.$cacheKey = cacheKey
+      }
       return fetchApi(context, cfg, options, dispatch)
     },
     [context, config, options, dispatch, state]
