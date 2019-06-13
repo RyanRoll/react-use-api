@@ -158,7 +158,9 @@ export const handleUseApiOptions = (
   cacheKey: string,
   context: ReactUseApi.Context
 ) => {
-  const { withLoading } = context
+  const {
+    settings: { withLoading }
+  } = context
   const options = isObject(opt)
     ? { withLoading, ...opt }
     : ({

@@ -26,7 +26,6 @@ declare namespace ReactUseApi {
     ssrConfigs?: SSRConfig[]
     renderSSR?: Settings['renderSSR']
     isSSR?: boolean
-    withLoading?: boolean
     $isConfigured?: boolean
   }
   interface CustomContext extends Omit<Context, 'settings'> {
