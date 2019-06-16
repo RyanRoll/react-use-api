@@ -3,6 +3,7 @@
 > [Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. Designed for diverse UI states as well as SSR (server-side rendering) and data pre-cache.
 
 > TypeScript Support
+
 > Thread safety
 
 ## Installation

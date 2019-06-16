@@ -1,13 +1,13 @@
 {
   "name": "react-use-api",
-  "version": "0.1.4-beta",
+  "version": "0.1.5-beta",
   "license": "MIT",
   "main": "build/index.js",
   "files": [
     "build",
     "src"
   ],
-  "repository": "https://github.com/RollTsai/react-use-api",
+  "repository": "https://github.com/RyanRoll/react-use-api",
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "yarn build:clear && tsc && yarn build:copy",
