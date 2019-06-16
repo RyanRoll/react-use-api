@@ -75,33 +75,6 @@ export const Main = () => {
 import React, { useState, useCallback } from 'react'
 import useApi from 'react-use-api'
 
-export const getAPiList = (offset, limit) => ({
-  url: '/api/list',
-  params: {
-    offset,
-    limit
-  }
-})
-
-// [IMPORTANT] Using any state setter in handleData is not allowed,
-// it will cause the component re-rendering infinitely while SSR rendering.
-export const handleData = state => {
-  const { prevData = [], response, dependencies, error } = state
-  if (!error) {
-    const {
-      data: { userList }
-    } = response
-    const { limit, hasMore } = dependencies
-    if (userList.length < limit) {
-      state.hasMore = false
-    }
-    return [...prevData, ...userList]
-  } else {
-    // show an error message from the api
-    console.log(error.response.data.msg)
-  }
-}
-
 export const Main = () => {
   const [offset, setOffset] = useState(0)
   const limit = 10
@@ -138,6 +111,33 @@ export const Main = () => {
     </>
   )
 }
+
+export const getAPiList = (offset, limit) => ({
+  url: '/api/list',
+  params: {
+    offset,
+    limit
+  }
+})
+
+// [IMPORTANT] Using any state setter in handleData is not allowed,
+// it will cause the component re-rendering infinitely while SSR rendering.
+export const handleData = state => {
+  const { prevData = [], response, dependencies, error } = state
+  if (!error) {
+    const {
+      data: { userList }
+    } = response
+    const { limit, hasMore } = dependencies
+    if (userList.length < limit) {
+      state.hasMore = false
+    }
+    return [...prevData, ...userList]
+  } else {
+    // show an error message from the api
+    console.log(error.response.data.msg)
+  }
+}
 ```
 
 ## Parameters
@@ -165,7 +165,7 @@ const [data, state] = useApi({
 | handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response.                                                                 |
 | withLoading   | boolean                                       | true    | Set true to enable the loading state, state.loading is true before the API response.                                             |
 | dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy. |
-| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering.                                                        |
+| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch.        |
 | watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                             |
 
 ## State
