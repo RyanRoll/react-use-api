@@ -21,7 +21,7 @@ describe('injectSSRHtml tests', () => {
   const feedRequests = jest
     .spyOn(ssrModule, 'feedRequests')
     .mockResolvedValue(html)
-  it.only('should injectSSRHtml well with settings.renderSSR', async () => {
+  it('should injectSSRHtml well with settings.renderSSR', async () => {
     const renderSSR = jest.fn().mockReturnValue(html)
     const context = configure({
       settings: {
@@ -34,17 +34,32 @@ describe('injectSSRHtml tests', () => {
     cache.reset = jest.fn()
     cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
     expect.hasAssertions()
-    try {
-      const ssrHtml = await injectSSRHtml(context)
-      expect(renderSSR).toHaveBeenCalled()
-      expect(cache.reset).toHaveBeenCalled()
-      expect(feedRequests).toHaveBeenLastCalledWith(context, html)
-      expect(ssrHtml).toEqual(
-        `${html}<script>window.__USE_API_CACHE__ = {"foo":"bar"}</script>`
-      )
-    } catch (e) {
-      // pass
-      console.log(e)
-    }
+    const ssrHtml = await injectSSRHtml(context)
+    expect(renderSSR).toHaveBeenCalled()
+    expect(cache.reset).toHaveBeenCalled()
+    expect(feedRequests).toHaveBeenLastCalledWith(context, html)
+    expect(ssrHtml).toEqual(
+      `${html}<script>window.__USE_API_CACHE__ = {"foo":"bar"}</script>`
+    )
+  })
+  it('should injectSSRHtml well without the html of the api cache script', async () => {
+    const renderSSR = jest.fn().mockReturnValue(html)
+    const context = configure({
+      settings: {
+        ...defaultSettings,
+        renderSSR,
+        useCacheData: false
+      }
+    })
+    const { settings } = context
+    const { cache } = settings
+    cache.reset = jest.fn()
+    cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
+    expect.hasAssertions()
+    const ssrHtml = await injectSSRHtml(context)
+    expect(renderSSR).toHaveBeenCalled()
+    expect(cache.reset).toHaveBeenCalled()
+    expect(feedRequests).toHaveBeenLastCalledWith(context, html)
+    expect(ssrHtml).toEqual(html)
   })
 })

@@ -39,6 +39,7 @@ describe('configure tests', () => {
         maxRequests: 100,
         renderSSR: noop,
         isSSR: noop,
+        useCacheData: false,
         deleteAfterLoading: false
       },
       ssrConfigs: customSSRConfig,

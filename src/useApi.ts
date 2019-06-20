@@ -11,8 +11,8 @@ import {
 } from './common'
 
 export const useApi = (
-  config: string | ReactUseApi.Config,
-  opt: ReactUseApi.Options
+  config: ReactUseApi.Config | string,
+  opt: ReactUseApi.Options | ReactUseApi.Options['handleData']
 ) => {
   if (typeof config === 'string') {
     config = {
@@ -154,7 +154,7 @@ export const fetchApi = async (
   }
 }
 export const handleUseApiOptions = (
-  opt: ReactUseApi.Options,
+  opt: ReactUseApi.Options | ReactUseApi.Options['handleData'],
   cacheKey: string,
   context: ReactUseApi.Context
 ) => {

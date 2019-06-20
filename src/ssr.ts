@@ -52,16 +52,19 @@ export const injectSSRHtml = async (
   context = configure(context)
   const { settings } = context
   settings.renderSSR = renderSSR || settings.renderSSR
-  const { cache, clientCacheVar } = settings
+  const { cache, useCacheData, clientCacheVar } = settings
   cache.reset()
   // collect axios calls first
   let ssrHtml = settings.renderSSR()
   ssrHtml = await (exports.feedRequests || feedRequests)(context, ssrHtml)
-  const cacheJson = cache.dump()
-  const axiosHooksScript = `<script>window.${clientCacheVar} = ${JSON.stringify(
-    cacheJson
-  ).replace(/</g, '\\u003c')}</script>`
-  return ssrHtml + axiosHooksScript
+  if (useCacheData) {
+    const cacheJson = cache.dump()
+    const axiosHooksScript = `<script>window.${clientCacheVar} = ${JSON.stringify(
+      cacheJson
+    ).replace(/</g, '\\u003c')}</script>`
+    return ssrHtml + axiosHooksScript
+  }
+  return ssrHtml
 }
 
 export const loadApiCache = (

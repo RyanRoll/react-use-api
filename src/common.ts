@@ -9,6 +9,7 @@ export const defaultSettings = {
   maxRequests: 50,
   withLoading: true,
   deleteAfterLoading: true,
+  useCacheData: true,
   renderSSR: (() => '') as Function,
   isSSR: (() => typeof window === 'undefined') as Function,
   debug: false

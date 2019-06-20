@@ -142,7 +142,18 @@ export const handleData = state => {
 
 ## Parameters
 
-```jsx
+#### Type
+
+```ts
+const [data, state, request] = useApi(
+  config: ReactUseApi.Config | string,
+  opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
+)
+```
+
+#### Code
+
+```js
 const [data, state, request] = useApi(config, options)
 ```
 
@@ -158,7 +169,7 @@ const [data, state] = useApi({
 })
 ```
 
-### Options
+### Options [Optional]
 
 | Name          | Type                                          | default | Description                                                                                                                      |
 | ------------- | --------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------- |
