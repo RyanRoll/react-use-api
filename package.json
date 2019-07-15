@@ -1,6 +1,6 @@
 {
   "name": "react-use-api",
-  "version": "0.2.0-beta",
+  "version": "0.2.1-beta",
   "license": "MIT",
   "main": "build/index.js",
   "files": [
@@ -19,7 +19,7 @@
     "lru-cache": "^5.1.1"
   },
   "devDependencies": {
-    "@babel/core": "7.4.3",
+    "@babel/core": "7.5.4",
     "@types/axios-mock-adapter": "^1.10.0",
     "@types/jest": "24.0.13",
     "@types/lru-cache": "^5.1.0",

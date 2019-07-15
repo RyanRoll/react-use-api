@@ -76,10 +76,10 @@ export const useApi = (
   }
   useEffect(() => {
     const isFeeding = cache.get(feedKey)
-    // For SSR: never invoke request() if
+    // SSR will never invoke request() due to the following cases:
     // 1. There is a cacheData for the cacheKey
     // 2. Feeding the data come from the cache
-    // For non-SSR: cacheData will be undefined if cacheKey has been changed
+    // For non-SSR, cacheData will be undefined if cacheKey has been changed
     if (!isSSR && !cacheData && !isFeeding) {
       request()
     }
@@ -100,6 +100,7 @@ export const reducer = (
         // reset the state to initState if the cacheKey is changed on the fly
         ...(cacheKey !== state.$cacheKey ? initState : state),
         loading: true,
+        error: undefined,
         $cacheKey: cacheKey
       }
     }

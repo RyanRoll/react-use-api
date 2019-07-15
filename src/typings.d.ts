@@ -14,7 +14,7 @@ declare namespace ReactUseApi {
   type MultiConfigs = SingleConfig[]
   type Config = SingleConfig | MultiConfigs
   type ApiResponse = Axios.AxiosResponse<JsonObject>
-  type Data = JsonObject | JsonObject[] | undefined
+  type Data = JsonObject | JsonObject[] | undefined | any
 
   type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
