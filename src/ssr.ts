@@ -71,11 +71,11 @@ export const loadApiCache = (
   context: ReactUseApi.Context = { settings: defaultSettings }
 ) => {
   const { settings } = context
-  const { clientCacheVar, deleteAfterLoading } = settings
+  const { clientCacheVar, autoPurgeCache } = settings
   const data = window[clientCacheVar]
   if (Array.isArray(data)) {
     settings.cache.load(data)
-    if (deleteAfterLoading) {
+    if (autoPurgeCache) {
       delete window[clientCacheVar]
     }
   }

@@ -5,14 +5,14 @@ import LRU from 'lru-cache'
 export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
-  clientCacheVar: '__USE_API_CACHE__',
   maxRequests: 50,
   withLoading: true,
-  deleteAfterLoading: true,
+  autoPurgeCache: true,
   useCacheData: true,
   renderSSR: (() => '') as Function,
   isSSR: (() => typeof window === 'undefined') as Function,
-  debug: false
+  debug: false,
+  clientCacheVar: '__USE_API_CACHE__'
 }
 export const ACTIONS = {
   REQUEST_START: 'REQUEST_START',

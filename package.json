@@ -1,6 +1,6 @@
 {
   "name": "react-use-api",
-  "version": "0.2.1-beta",
+  "version": "0.2.2-beta",
   "license": "MIT",
   "main": "build/index.js",
   "files": [

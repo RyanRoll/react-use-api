@@ -36,7 +36,7 @@ export const useApi = (
       }
       return fetchApi(context, cfg, options, dispatch)
     },
-    [context, config, options, dispatch, state]
+    [context, cacheKey, options, dispatch, state]
   )
 
   const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)

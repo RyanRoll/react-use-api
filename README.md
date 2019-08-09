@@ -173,13 +173,13 @@ const [data, state] = useApi({
 
 ### Options [Optional]
 
-| Name          | Type                                          | default | Description                                                                                                                                                                                                  |
-| ------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response. **IMPORTANT** Using any state setter in handleData is dangerous, which will cause the component re-rendering infinitely while SSR rendering |
-| withLoading   | boolean                                       | true    | Set true to enable the loading state, state.loading is true before the API response.                                                                                                                         |
-| dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                             |
-| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch.                                                                                    |
-| watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                         |
+| Name          | Type                                          | default | Description                                                                                                                                                                                                   |
+| ------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response. **IMPORTANT** Using any state setter in handleData is dangerous, which will cause the component re-rendering infinitely while SSR rendering. |
+| withLoading   | boolean                                       | true    | Set true to enable the loading state, state.loading is true before the API response.                                                                                                                          |
+| dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                              |
+| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch.                                                                                     |
+| watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                          |
 
 ## State
 
@@ -187,24 +187,24 @@ const [data, state] = useApi({
 
 The first state has only one propery `loading` before calling api.
 
-| Name    | Type    | Default | Description                            |
-| ------- | ------- | ------- | -------------------------------------- |
-| loading | boolean | false   | to indicate whether calling api or not |
+| Name    | Type    | Default | Description                             |
+| ------- | ------- | ------- | --------------------------------------- |
+| loading | boolean | false   | To indicate whether calling api or not. |
 
 #### Full State
 
 The is the full state data structure after the api has responded.
 
-| Name          | Type              | Default   | Description                                                                                                                                                                      |
-| ------------- | ----------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| loading       | boolean           | false     | to indicate whether calling api or not                                                                                                                                           |
-| data          | any               | undefined | The processed data provided from `options.handleData`                                                                                                                            |
-| response      | AxiosResponse     | undefined | The Axios' response                                                                                                                                                              |
-| error         | AxiosError        | undefined | The Axios' error                                                                                                                                                                 |
-| dependencies  | Object            | undefined | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy                                                  |
-| prevData      | any               | undefined | The previous data of the previous state                                                                                                                                          |
-| prevState     | ReactUseApi.State | undefined | The previous state                                                                                                                                                               |
-| [custom data] | any               |           | You can add your own custom state data into the state by setting up in `options.handleData`. For example, `state.foo = 'bar'`. The data always be preserved whether re-rendering |
+| Name          | Type              | Default   | Description                                                                                                                                                                       |
+| ------------- | ----------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| loading       | boolean           | false     | To indicate whether calling api or not.                                                                                                                                           |
+| data          | any               | undefined | The processed data provided from `options.handleData`.                                                                                                                            |
+| response      | AxiosResponse     | undefined | The Axios' response.                                                                                                                                                              |
+| error         | AxiosError        | undefined | The Axios' error.                                                                                                                                                                 |
+| dependencies  | Object            | undefined | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                  |
+| prevData      | any               | undefined | The previous data of the previous state.                                                                                                                                          |
+| prevState     | ReactUseApi.State | undefined | The previous state.                                                                                                                                                               |
+| [custom data] | any               |           | You can add your own custom state data into the state by setting up in `options.handleData`. For example, `state.foo = 'bar'`. The data always be preserved whether re-rendering. |
 
 ## TypeScript Support
 
@@ -251,16 +251,65 @@ export const render = async (req, axios) => {
 }
 ```
 
-#### Load the cached api data
+**The cache data is inserted into the html text as well.**
 
-```jsx
-// loadApiCache
-// TBD...
+> The cache data will be cleaned up after calling loadApiCache()
+
+```html
+<script>
+  window.__USE_API_CACHE__ = '[{ ... }]'
+</script>
 ```
 
-#### SSR Settings
+##### Settings of apiContext (ReactUseApi.CustomContext)
 
-TBD...
+_Each property of settings is optional_
+
+| Name           | Type                              | Default                             | Description                                                                                 |
+| -------------- | --------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------- |
+| cache          | LRU<String, ReactUseApi.CacheData | any>                                | new LRU()                                                                                   | The cache instance based on lru-cache |
+| axios          | AxiosStatic                       | AxiosInstance                       | axios                                                                                       | axios instance (http client) |
+| maxRequests    | number                            | 50                                  | The maximum of API requests when SSR                                                        |
+| withLoading    | boolean                           | true                                | The state.loading will be true while calling API data. Set true to keep state.loading false |
+| autoPurgeCache | boolean                           | true                                | Cache data will be cleaned up after executing loadApiCache()                                |
+| useCacheData   | boolean                           | true                                | Set true to inject JS cache data into html when calling injectSSRHtml()                     |
+| renderSSR      | Function                          | () => ''                            | A callback to render SSR string for injectSSRHtml()                                         |
+| isSSR          | Function                          | () => typeof window === 'undefined' | A function to determine if the current environment is server                                |
+| debug          | boolean                           | true                                | Set true to get debug message from console                                                  |
+| clientCacheVar | string                            | '**USE_API_CACHE**'                 | The JS variable name of cache data                                                          |
+
+##### Arguments of injectSSRHtml
+
+```ts
+injectSSRHtml(
+  context: ReactUseApi.CustomContext,
+  renderSSR?: () => string
+): string
+
+```
+
+#### SSR: Load cached api data
+
+```jsx
+// src/index.jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { ApiProvider, loadApiCache } from 'react-use-api'
+
+import App from './components/App'
+
+const rootElement = document.getElementById('root')
+const method = rootElement.hasChildNodes() ? 'hydrate' : 'render'
+
+loadApiCache()
+
+ReactDOM[method](
+  <ApiProvider>
+    <App />
+  </ApiProvider>,
+  rootElement
+)
+```
 
 ## Credits
 
