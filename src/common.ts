@@ -6,7 +6,6 @@ export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
   maxRequests: 50,
-  withLoading: true,
   autoPurgeCache: true,
   useCacheData: true,
   renderSSR: (() => '') as Function,
@@ -75,9 +74,8 @@ export async function axiosAll(
     const { response } = error as ReactUseApi.CacheData['error']
     if (response) {
       tidyResponse(response)
-      throw error as AxiosError
     }
-    throw error
+    throw error as AxiosError
   }
 }
 

@@ -1,5 +1,12 @@
 # React Use API
 
+[![npm](https://img.shields.io/npm/v/react-use-api?label=version)](https://www.npmjs.com/package/react-use-api)
+![Travis (.org)](https://img.shields.io/travis/RyanRoll/react-user-api)
+[![Coverage Status](https://coveralls.io/repos/github/RyanRoll/react-use-api/badge.svg?branch=feat/develop)](https://coveralls.io/github/RyanRoll/react-use-api?branch=feat/develop)
+![npm type definitions](https://img.shields.io/npm/types/react-use-api)
+![React](https://img.shields.io/badge/React-%3E%3Dv16.9.0-red)
+![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api)
+
 > [Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. Designed for diverse UI states as well as SSR (server-side rendering) and data pre-cache.
 
 > TypeScript Support
@@ -94,7 +101,7 @@ export const Main = () => {
   const loadMore = useCallback(() => {
     const nextOffset = offset + limit
     // fetch the data and keep the state and prevData
-    request(getAPiList(nextOffset, limit), true)
+    request(getAPiList(nextOffset, limit))
     setOffset(nextOffset)
   }, [offset, setOffset])
 
@@ -157,6 +164,9 @@ const [data, state, request] = useApi(
 
 ```jsx
 const [data, state, request] = useApi(config, options)
+
+// request API data again
+request(config?: ReactUseApi.Config, keepState = true)
 ```
 
 ### Config
@@ -176,7 +186,6 @@ const [data, state] = useApi({
 | Name          | Type                                          | default | Description                                                                                                                                                                                                   |
 | ------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response. **IMPORTANT** Using any state setter in handleData is dangerous, which will cause the component re-rendering infinitely while SSR rendering. |
-| withLoading   | boolean                                       | true    | Set true to enable the loading state, state.loading is true before the API response.                                                                                                                          |
 | dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                              |
 | shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch.                                                                                     |
 | watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                          |
@@ -205,6 +214,15 @@ The is the full state data structure after the api has responded.
 | prevData      | any               | undefined | The previous data of the previous state.                                                                                                                                          |
 | prevState     | ReactUseApi.State | undefined | The previous state.                                                                                                                                                               |
 | [custom data] | any               |           | You can add your own custom state data into the state by setting up in `options.handleData`. For example, `state.foo = 'bar'`. The data always be preserved whether re-rendering. |
+
+#### Request Function
+
+A function allows requesting API data again. This function will trigger re-render.
+
+| Name      | Type               | Default                         | Description                                                                                                                       |
+| --------- | ------------------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| config    | ReactUseApi.Config | The config passed from useApi() | An axios' config object to fetch API data.                                                                                        |
+| keepState | boolean            | true                            | Set to true to maintain current state data, which facilitates combining previous data with current data, such as table list data. |
 
 ## TypeScript Support
 
@@ -238,7 +256,7 @@ export const render = async (req, axios) => {
     }
   }
   const routerContext = {}
-  const html = await injectSSRHtml(apiContext, () =>
+  const renderSSR = () =>
     ReactDom.renderToString(
       <ApiProvider context={apiContext}>
         <StaticRouter location={url} context={routerContext}>
@@ -246,7 +264,7 @@ export const render = async (req, axios) => {
         </StaticRouter>
       </ApiProvider>
     )
-  )
+  const html = await injectSSRHtml(apiContext, renderSSR)
   return html
 }
 ```
@@ -265,18 +283,17 @@ export const render = async (req, axios) => {
 
 _Each property of settings is optional_
 
-| Name           | Type                              | Default                             | Description                                                                                 |
-| -------------- | --------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------- |
-| cache          | LRU<String, ReactUseApi.CacheData | any>                                | new LRU()                                                                                   | The cache instance based on lru-cache |
-| axios          | AxiosStatic                       | AxiosInstance                       | axios                                                                                       | axios instance (http client) |
-| maxRequests    | number                            | 50                                  | The maximum of API requests when SSR                                                        |
-| withLoading    | boolean                           | true                                | The state.loading will be true while calling API data. Set true to keep state.loading false |
-| autoPurgeCache | boolean                           | true                                | Cache data will be cleaned up after executing loadApiCache()                                |
-| useCacheData   | boolean                           | true                                | Set true to inject JS cache data into html when calling injectSSRHtml()                     |
-| renderSSR      | Function                          | () => ''                            | A callback to render SSR string for injectSSRHtml()                                         |
-| isSSR          | Function                          | () => typeof window === 'undefined' | A function to determine if the current environment is server                                |
-| debug          | boolean                           | true                                | Set true to get debug message from console                                                  |
-| clientCacheVar | string                            | '**USE_API_CACHE**'                 | The JS variable name of cache data                                                          |
+| Name           | Type                                      | Default                             | Description                                                             |
+| -------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
+| cache          | LRU<String, ReactUseApi.CacheData \| any> |                                     | new LRU() The cache instance based on lru-cache                         |
+| axios          | AxiosStatic \| AxiosInstance              | axios                               | axios instance (http client)                                            |
+| maxRequests    | number                                    | 50                                  | The maximum of API requests when SSR                                    |
+| autoPurgeCache | boolean                                   | true                                | Cache data will be cleaned up after executing loadApiCache()            |
+| useCacheData   | boolean                                   | true                                | Set true to inject JS cache data into html when calling injectSSRHtml() |
+| renderSSR      | Function                                  | () => ''                            | A callback to render SSR string for injectSSRHtml()                     |
+| isSSR          | Function                                  | () => typeof window === 'undefined' | A function to determine if the current environment is server            |
+| debug          | boolean                                   | true                                | Set true to get debug message from console                              |
+| clientCacheVar | string                                    | '**USE_API_CACHE**'                 | The JS variable name of cache data                                      |
 
 ##### Arguments of injectSSRHtml
 
@@ -319,7 +336,9 @@ Since the code architecture and SSR support are very different from axios-hooks,
 
 ## Test
 
-TBD... not done yet (UT and CI)
+```bash
+$ npm test
+```
 
 ## License
 

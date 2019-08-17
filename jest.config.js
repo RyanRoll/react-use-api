@@ -1,10 +1,14 @@
 module.exports = {
-  collectCoverageFrom: ['tests/**/*.{js,jsx,ts,tsx}', '!tests/**/*.d.ts'],
+  collectCoverageFrom: [
+    "!<rootDir>/**/*.d.ts",
+    "<rootDir>/src/*.{js,jsx,ts,tsx}",
+    "!**/node_modules/**",
+  ],
   setupFiles: ['react-app-polyfill/jsdom'],
   setupFilesAfterEnv: [],
   testMatch: [
-    '<rootDir>/tests/**/*.test.{js,jsx,ts,tsx}',
-    '<rootDir>/tests/**/*.{spec,test}.{js,jsx,ts,tsx}',
+    // '<rootDir>/src/**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)',
+    '**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)'
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
@@ -39,9 +43,7 @@ module.exports = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/build/', '/__mocks__/'],
-  modulePathIgnorePatterns: ['/__mocks__/'],
   verbose: true,
   collectCoverage: false,
-  coverageReporters: ['html'],
+  coverageReporters: ['html', 'text-lcov'],
 }

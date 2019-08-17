@@ -1,19 +1,19 @@
-/// <reference path="../src/typings.d.ts" />
+/// <reference path="../typings.d.ts" />
 
 import React, { useContext } from 'react'
 import LRU from 'lru-cache'
 import TestRenderer from 'react-test-renderer'
 
-import { ApiProvider } from '../src'
-import { ApiContext } from '../src/context'
-import { defaultSettings } from '../src/common'
+import { ApiProvider } from '../ApiProvider'
+import { ApiContext } from '../context'
+import { defaultSettings } from '../common'
 
 describe('ApiProvider tests', () => {
   it('should default context work as expected if context does not pass to ApiProvider', () => {
     let context: ReactUseApi.Context = {}
     const App: React.FC = () => {
       context = useContext(ApiContext)
-      return <>Hello World</>
+      return <div>Hello World</div>
     }
     const testRenderer = TestRenderer.create(
       <ApiProvider>
@@ -26,8 +26,10 @@ describe('ApiProvider tests', () => {
       cache: new LRU()
     })
     expect(isSSR).toBe(false) // window exists in jest
+    expect(testRenderer.toJSON()).toMatchSnapshot()
   })
-  it('should context work as expected ', () => {
+
+  it('should context work as expected', () => {
     const context: ReactUseApi.Context = {}
     const testRenderer = TestRenderer.create(<ApiProvider context={context} />)
     const { root } = testRenderer

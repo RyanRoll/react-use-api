@@ -1,4 +1,4 @@
-/// <reference path="../src/typings.d.ts" />
+/// <reference path="../typings.d.ts" />
 
 import axios from 'axios'
 import LRU from 'lru-cache'
@@ -13,7 +13,7 @@ import {
   isObject,
   isFunction,
   isNil
-} from '../src/common'
+} from '../common'
 
 const noop = function() {}
 
@@ -29,6 +29,7 @@ describe('configure tests', () => {
     expect(typeof isSSR).toBe('boolean')
     expect($isConfigured).toBe(true)
   })
+
   it('should configure work with custom settings', () => {
     const customSSRConfig = []
     const custom = {
@@ -66,9 +67,7 @@ describe('axiosAll tests', () => {
   const data = {
     foo: 'bar'
   }
-  mock.onGet(url).reply(() => {
-    return [200, data]
-  })
+  mock.onGet(url).reply(200, data)
 
   it('should a single api request work well', async () => {
     const config: ReactUseApi.Config = {
@@ -78,6 +77,7 @@ describe('axiosAll tests', () => {
     expect(Array.isArray(response)).toBe(false)
     expect(response.data).toEqual(data)
   })
+
   it('should the multiple api requests work well', async () => {
     const config: ReactUseApi.MultiConfigs = [
       {
@@ -92,13 +92,12 @@ describe('axiosAll tests', () => {
     expect(responses[0].data).toEqual(data)
     expect(responses[1].data).toEqual(data)
   })
+
   it('should an api request work failed', async () => {
     const errorData = {
       message: 'Error!'
     }
-    mock.onGet(url).reply(() => {
-      return [500, errorData]
-    })
+    mock.onGet(url).reply(500, errorData)
     const config: ReactUseApi.Config = {
       url
     }

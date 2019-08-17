@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ApiProvider tests should default context work as expected if context does not pass to ApiProvider 1`] = `
+<div>
+  Hello World
+</div>
+`;

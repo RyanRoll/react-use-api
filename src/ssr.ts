@@ -7,6 +7,7 @@ export const feedRequests = async (
 ) => {
   const { settings, ssrConfigs } = context
   const { cache, renderSSR, debug } = settings
+
   if (!ssrConfigs.length) {
     debug &&
       console.log(
