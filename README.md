@@ -1,7 +1,6 @@
 <div align="center">
   <h1>
     <br/>
-    <br/>
     React Use API
     <br />
     <br />
@@ -15,11 +14,9 @@
 ![npm type definitions](https://img.shields.io/npm/types/react-use-api?color=0277BD)
 ![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api?color=5C6BC0)
 
-> [Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. Designed for diverse UI states as well as SSR (server-side rendering) and data pre-cache.
+[Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. `react-use-api` feeds API data to React components when SSR (Server-Side Rendering), and caches the data to Front-End. This is designed for diverse UI states and also a good solution if your app is based on [create-react-app](https://create-react-app.dev).
 
 > TypeScript Support
-
-> Not only cache api data but also feed it into React components when SSR
 
 > Thread-safe SSR
 
@@ -50,8 +47,8 @@ import useApi, { ApiProvider } from 'react-use-api'
 
 import App from './App'
 
-// theres is only one prop parameter "context", which is must given for SSR,
-// the client side can omit it
+// there is only one props "context", which is must given for SSR,
+// client side can omit it
 ReactDom.render(
   <ApiProvider>
     <App />
@@ -301,7 +298,7 @@ _Each property of settings is optional_
 | renderSSR      | Function                                  | () => ''                            | A callback to render SSR string for injectSSRHtml()                     |
 | isSSR          | Function                                  | () => typeof window === 'undefined' | A function to determine if the current environment is server            |
 | debug          | boolean                                   | true                                | Set true to get debug message from console                              |
-| clientCacheVar | string                                    | '**USE_API_CACHE**'                 | The JS variable name of cache data                                      |
+| clientCacheVar | string                                    | 'USE_API_CACHE'                     | The JS variable name of cache data                                      |
 
 ##### Arguments of injectSSRHtml
 
