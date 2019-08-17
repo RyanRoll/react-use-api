@@ -15,8 +15,8 @@
     "build:copy": "shx cp src/*.d.ts build",
     "test": "node scripts/test.js",
     "test:coverage": "jest --coverage",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "coveralls:local": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "coveralls": "yarn coveralls:local && shx rm -rf ./coverage",
+    "coveralls:local": "jest --coverage | coveralls",
     "semantic-release": "semantic-release -d"
   },
   "keywords": [
