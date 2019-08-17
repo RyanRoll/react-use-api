@@ -1,11 +1,11 @@
-/// <reference path="../src/typings.d.ts" />
+/// <reference path="../typings.d.ts" />
 
 import LRU from 'lru-cache'
-import { configure, defaultSettings } from '../src/common'
-import * as ssrModule from '../src/ssr'
+import { configure, defaultSettings } from '../common'
+import * as ssrModule from '../ssr'
 
-jest.mock('../src/common', () => {
-  const common = jest.requireActual('../src/common')
+jest.mock('../common', () => {
+  const common = jest.requireActual('../common')
   return {
     ...common,
     axiosAll: jest.fn()
@@ -33,7 +33,7 @@ testCache.set('abc', 123)
 const cacheData = testCache.dump()
 
 describe('feedRequests tests', () => {
-  const { axiosAll } = require('../src/common')
+  const { axiosAll } = require('../common')
 
   it('should work as expected', async () => {
     let count = 1

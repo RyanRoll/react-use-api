@@ -1,4 +1,4 @@
-/// <reference path="../src/typings.d.ts" />
+/// <reference path="../typings.d.ts" />
 
 import axios from 'axios'
 import LRU from 'lru-cache'
@@ -13,7 +13,7 @@ import {
   isObject,
   isFunction,
   isNil
-} from '../src/common'
+} from '../common'
 
 const noop = function() {}
 

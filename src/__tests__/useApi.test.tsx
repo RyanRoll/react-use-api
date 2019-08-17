@@ -1,4 +1,4 @@
-/// <reference path="../src/typings.d.ts" />
+/// <reference path="../typings.d.ts" />
 
 import React, { useState } from 'react'
 import LRU from 'lru-cache'
@@ -6,9 +6,9 @@ import { renderHook, act } from '@testing-library/react-hooks'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 
-import { ApiProvider } from '../src/ApiProvider'
-import { useApi, reducer, fetchApi, handleUseApiOptions } from '../src/useApi'
-import { ACTIONS, initState } from '../src/common'
+import { ApiProvider } from '../ApiProvider'
+import { useApi, reducer, fetchApi, handleUseApiOptions } from '../useApi'
+import { ACTIONS, initState } from '../common'
 
 const mock = new MockAdapter(axios)
 const originalLog = console.log
