@@ -6,8 +6,11 @@ node_js:
 
 jobs:
   include:
+    - stage: Produce Coverage
+      node_js: lts/*
+      script: yarn coveralls
     # Define the release stage that runs semantic-release
-    - stage: release
+    - stage: Release
       node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
       # script: skip

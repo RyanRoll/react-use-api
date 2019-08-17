@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+.coveralls.yml
 
 # production
 /build

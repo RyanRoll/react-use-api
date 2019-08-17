@@ -1,6 +1,6 @@
 {
   "name": "react-use-api",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "license": "MIT",
   "main": "build/index.js",
   "files": [
@@ -15,7 +15,9 @@
     "build:copy": "shx cp src/*.d.ts build",
     "test": "node scripts/test.js",
     "test:coverage": "jest --coverage",
-    "semantic-release": "semantic-release"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "coveralls:local": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "semantic-release": "semantic-release -d"
   },
   "keywords": [
     "react",
@@ -49,6 +51,7 @@
     "babel-jest": "^24.8.0",
     "babel-preset-react-app": "^9.0.0",
     "camelcase": "^5.2.0",
+    "coveralls": "^3.0.6",
     "eslint": "^5.16.0",
     "eslint-config-react-app": "^4.0.1",
     "eslint-loader": "2.1.2",
@@ -91,6 +94,6 @@
     ]
   },
   "release": {
-    "branch": "feat/develop"
+    "branch": "master"
   }
 }

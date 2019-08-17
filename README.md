@@ -1,5 +1,12 @@
 # React Use API
 
+[![npm](https://img.shields.io/npm/v/react-use-api?label=version)](https://www.npmjs.com/package/react-use-api)
+![Travis (.org)](https://img.shields.io/travis/RyanRoll/react-user-api)
+[![Coverage Status](https://coveralls.io/repos/github/RyanRoll/react-use-api/badge.svg?branch=feat/develop)](https://coveralls.io/github/RyanRoll/react-use-api?branch=feat/develop)
+![npm type definitions](https://img.shields.io/npm/types/react-use-api)
+![React](https://img.shields.io/badge/React-%3E%3Dv16.9.0-red)
+![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api)
+
 > [Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. Designed for diverse UI states as well as SSR (server-side rendering) and data pre-cache.
 
 > TypeScript Support
