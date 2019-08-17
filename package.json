@@ -13,7 +13,8 @@
     "build": "yarn build:clear && tsc && yarn build:copy",
     "build:clear": "shx rm -rf build",
     "build:copy": "shx cp src/*.d.ts build",
-    "test": "node scripts/test.js",
+    "test": "jest",
+    "test:watch": "node scripts/test.js",
     "test:coverage": "jest --coverage",
     "semantic-release": "semantic-release"
   },
