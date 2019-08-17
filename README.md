@@ -1,11 +1,19 @@
-# React Use API
+<div align="center">
+  <h1>
+    <br/>
+    <br/>
+    React Use API
+    <br />
+    <br />
+  </h1>
+</div>
 
-[![npm](https://img.shields.io/npm/v/react-use-api?label=version)](https://www.npmjs.com/package/react-use-api)
+[![npm](https://img.shields.io/npm/v/react-use-api?label=version&color=43A047)](https://www.npmjs.com/package/react-use-api)
 [![Build Status](https://travis-ci.org/RyanRoll/react-use-api.svg?branch=master)](https://travis-ci.org/RyanRoll/react-use-api)
 [![Coverage Status](https://coveralls.io/repos/github/RyanRoll/react-use-api/badge.svg?branch=feat/develop)](https://coveralls.io/github/RyanRoll/react-use-api?branch=feat/develop)
-![npm type definitions](https://img.shields.io/npm/types/react-use-api)
-![React](https://img.shields.io/badge/React-%3E%3Dv16.9.0-red)
-![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api)
+![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/RyanRoll/react-use-api/dev/react?color=EF5350)
+![npm type definitions](https://img.shields.io/npm/types/react-use-api?color=0277BD)
+![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api?color=5C6BC0)
 
 > [Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. Designed for diverse UI states as well as SSR (server-side rendering) and data pre-cache.
 
@@ -17,7 +25,7 @@
 
 ## Installation
 
-_Axios is a peer dependency (prerequisite) and it has to be installed_
+❗*Axios is a peer dependency (prerequisite) and it has to be installed*
 
 #### NPM
 
@@ -285,7 +293,7 @@ _Each property of settings is optional_
 
 | Name           | Type                                      | Default                             | Description                                                             |
 | -------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
-| cache          | LRU<String, ReactUseApi.CacheData \| any> |                                     | new LRU() The cache instance based on lru-cache                         |
+| cache          | LRU<String, ReactUseApi.CacheData \| any> | new LRU()                           | The cache instance based on lru-cache                                   |
 | axios          | AxiosStatic \| AxiosInstance              | axios                               | axios instance (http client)                                            |
 | maxRequests    | number                                    | 50                                  | The maximum of API requests when SSR                                    |
 | autoPurgeCache | boolean                                   | true                                | Cache data will be cleaned up after executing loadApiCache()            |
