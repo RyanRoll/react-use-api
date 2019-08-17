@@ -8,7 +8,6 @@ module.exports = {
   setupFilesAfterEnv: [],
   testMatch: [
     '<rootDir>/src/__tests__/**/*.test.{js,jsx,ts,tsx}',
-    '<rootDir>/src/__tests__/**/*.{spec,test}.{js,jsx,ts,tsx}',
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
