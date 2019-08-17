@@ -7,7 +7,8 @@ module.exports = {
   setupFiles: ['react-app-polyfill/jsdom'],
   setupFilesAfterEnv: [],
   testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.[jt]s?(x)',
+    // '<rootDir>/src/**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)',
+    '**/?(*.)+(spec|test).ts?(x)'
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
@@ -42,7 +43,6 @@ module.exports = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/build/', '/__mocks__/', '/coverage/'],
   verbose: true,
   collectCoverage: false,
   coverageReporters: ['html'],
