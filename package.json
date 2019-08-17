@@ -1,6 +1,6 @@
 {
   "name": "react-use-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "build/index.js",
   "files": [
@@ -36,6 +36,8 @@
   "devDependencies": {
     "@babel/core": "7.5.4",
     "@babel/runtime": "^7.5.5",
+    "@semantic-release/changelog": "^3.0.4",
+    "@semantic-release/git": "^7.0.16",
     "@testing-library/react-hooks": "^2.0.1",
     "@types/axios-mock-adapter": "^1.10.0",
     "@types/jest": "24.0.13",
@@ -94,6 +96,14 @@
     ]
   },
   "release": {
-    "branch": "master"
+    "branch": "master",
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ]
   }
 }
