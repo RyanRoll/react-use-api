@@ -8,7 +8,8 @@ jobs:
   include:
     - stage: Produce Coverage
       node_js: lts/*
-      script: yarn coveralls
+      script:
+        - yarn coveralls
     # Define the release stage that runs semantic-release
     - stage: Release
       node_js: lts/*
