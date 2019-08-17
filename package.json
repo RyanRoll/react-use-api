@@ -13,7 +13,7 @@
     "build": "yarn build:clear && tsc && yarn build:copy",
     "build:clear": "shx rm -rf build",
     "build:copy": "shx cp src/*.d.ts build",
-    "test": "pwd && node scripts/test.js",
+    "test": "node scripts/test.js",
     "test:coverage": "jest --coverage",
     "semantic-release": "semantic-release"
   },
@@ -58,7 +58,7 @@
     "eslint-plugin-react": "7.12.4",
     "eslint-plugin-react-hooks": "^1.5.0",
     "identity-obj-proxy": "3.0.0",
-    "jest": "24.7.1",
+    "jest": "24.9.0",
     "jest-environment-jsdom-fourteen": "0.1.0",
     "jest-resolve": "24.7.1",
     "jest-watch-typeahead": "0.3.0",
