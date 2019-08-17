@@ -6,9 +6,9 @@ module.exports = {
   ],
   setupFiles: ['react-app-polyfill/jsdom'],
   setupFilesAfterEnv: [],
-  testMatch: [
-    '<rootDir>/src/__tests__/**/*.test.{js,jsx,ts,tsx}',
-  ],
+  // testMatch: [
+  //   '<rootDir>/src/__tests__/**/*.test.{js,jsx,ts,tsx}',
+  // ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
@@ -42,8 +42,7 @@ module.exports = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/build/', '/__mocks__/'],
-  modulePathIgnorePatterns: ['/__mocks__/'],
+  testPathIgnorePatterns: ['/node_modules/', '/build/', '/__mocks__/', '/coverage/', '<rootDir>/scripts/'],
   verbose: true,
   collectCoverage: false,
   coverageReporters: ['html'],
