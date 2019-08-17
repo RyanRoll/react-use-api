@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - 10
+  - lts/*
   - 11
   - 12
 
 jobs:
   include:
-    - stage: Produce Coverage
+    - stage: Coveralls
       node_js: lts/*
       script:
         - yarn coveralls
