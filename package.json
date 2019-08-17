@@ -17,7 +17,7 @@
     "test:coverage": "jest --coverage",
     "coveralls": "yarn coveralls:local && shx rm -rf ./coverage",
     "coveralls:local": "jest --coverage | coveralls",
-    "semantic-release": "semantic-release -d"
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "react",
