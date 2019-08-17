@@ -11,10 +11,15 @@ import { useApi, reducer, fetchApi, handleUseApiOptions } from '../src/useApi'
 import { ACTIONS, initState } from '../src/common'
 
 const mock = new MockAdapter(axios)
+const originalLog = console.log
 
 beforeEach(() => {
   jest.resetModules()
   mock.reset()
+})
+
+afterEach(() => {
+  console.log = originalLog
 })
 
 describe('useApi tests', () => {

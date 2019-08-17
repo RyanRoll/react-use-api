@@ -74,9 +74,8 @@ export async function axiosAll(
     const { response } = error as ReactUseApi.CacheData['error']
     if (response) {
       tidyResponse(response)
-      throw error as AxiosError
     }
-    throw error
+    throw error as AxiosError
   }
 }
 

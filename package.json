@@ -1,6 +1,6 @@
 {
   "name": "react-use-api",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "license": "MIT",
   "main": "build/index.js",
   "files": [
@@ -14,7 +14,8 @@
     "build:clear": "shx rm -rf build",
     "build:copy": "shx cp src/*.d.ts build",
     "test": "node scripts/test.js",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "semantic-release": "semantic-release"
   },
   "keywords": [
     "react",
@@ -65,6 +66,7 @@
     "react-app-polyfill": "^1.0.1",
     "react-dom": "^16.9.0",
     "react-test-renderer": "^16.8.6",
+    "semantic-release": "^15.13.21",
     "shx": "^0.3.2",
     "typescript": "^3.5.1"
   },
@@ -87,5 +89,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "release": {
+    "branch": "feat/develop"
   }
 }

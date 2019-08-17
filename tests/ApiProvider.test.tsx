@@ -13,7 +13,7 @@ describe('ApiProvider tests', () => {
     let context: ReactUseApi.Context = {}
     const App: React.FC = () => {
       context = useContext(ApiContext)
-      return <>Hello World</>
+      return <div>Hello World</div>
     }
     const testRenderer = TestRenderer.create(
       <ApiProvider>
@@ -26,8 +26,10 @@ describe('ApiProvider tests', () => {
       cache: new LRU()
     })
     expect(isSSR).toBe(false) // window exists in jest
+    expect(testRenderer.toJSON()).toMatchSnapshot()
   })
-  it('should context work as expected ', () => {
+
+  it('should context work as expected', () => {
     const context: ReactUseApi.Context = {}
     const testRenderer = TestRenderer.create(<ApiProvider context={context} />)
     const { root } = testRenderer

@@ -249,7 +249,7 @@ export const render = async (req, axios) => {
     }
   }
   const routerContext = {}
-  const html = await injectSSRHtml(apiContext, () =>
+  const renderSSR = () =>
     ReactDom.renderToString(
       <ApiProvider context={apiContext}>
         <StaticRouter location={url} context={routerContext}>
@@ -257,7 +257,7 @@ export const render = async (req, axios) => {
         </StaticRouter>
       </ApiProvider>
     )
-  )
+  const html = await injectSSRHtml(apiContext, renderSSR)
   return html
 }
 ```
