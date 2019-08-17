@@ -7,7 +7,7 @@ module.exports = {
   setupFiles: ['react-app-polyfill/jsdom'],
   setupFilesAfterEnv: [],
   testMatch: [
-    '<rootDir>/src/__tests__/**/*.test.{js,jsx,ts,tsx}',
+    '<rootDir>/src/**/__tests__/**/*.[jt]s?(x)',
   ],
   testEnvironment: 'jest-environment-jsdom-fourteen',
   transform: {
