@@ -16,11 +16,6 @@ declare namespace ReactUseApi {
   type ApiResponse = Axios.AxiosResponse<JsonObject>
   type Data = JsonObject | JsonObject[] | undefined | any
 
-  type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-
-  interface ApiProviderProps {
-    context?: Context
-  }
   interface Context {
     settings?: Settings
     ssrConfigs?: SSRConfig[]
@@ -31,10 +26,12 @@ declare namespace ReactUseApi {
   interface CustomContext extends Omit<Context, 'settings'> {
     settings?: CustomSettings
   }
+  interface ApiProviderProps {
+    context?: CustomContext
+  }
   interface Options {
     watch?: any[]
     handleData?: (data: Data, newState: State) => any
-    withLoading?: boolean
     shouldRequest?: () => boolean | void
     dependencies?: dependencies
     $cacheKey?: string
@@ -51,7 +48,7 @@ declare namespace ReactUseApi {
     type: string
     options?: Options
   }
-  interface State extends InitState, CacheData {
+  interface State extends InitState, CacheData, JsonObject {
     data?: Data
     prevData?: Data
     prevState?: State

@@ -6,7 +6,6 @@ export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
   maxRequests: 50,
-  withLoading: true,
   autoPurgeCache: true,
   useCacheData: true,
   renderSSR: (() => '') as Function,
