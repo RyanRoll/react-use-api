@@ -57,7 +57,7 @@ export const injectSSRHtml = async (
   cache.reset()
   // collect axios calls first
   let ssrHtml = settings.renderSSR()
-  ssrHtml = await (exports.feedRequests || feedRequests)(context, ssrHtml)
+  ssrHtml = await exports.feedRequests(context, ssrHtml)
   if (useCacheData) {
     const cacheJson = cache.dump()
     const axiosHooksScript = `<script>window.${clientCacheVar} = ${JSON.stringify(

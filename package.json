@@ -8,6 +8,7 @@
     "src"
   ],
   "repository": "https://github.com/RyanRoll/react-use-api",
+  "homepage": "https://react-use-api.gitbook.io/react-use-api",
   "scripts": {
     "prepublishOnly": "yarn build",
     "build": "yarn build:clear && tsc && yarn build:copy",
@@ -16,15 +17,21 @@
     "test": "node scripts/test.js",
     "test:coverage": "jest --coverage",
     "coveralls": "yarn coveralls:local && shx rm -rf ./coverage",
-    "coveralls:local": "jest --coverage | coveralls",
+    "coveralls:local": "yarn test:coverage | coveralls",
     "semantic-release": "semantic-release"
   },
   "keywords": [
     "react",
     "react-hooks",
-    "server side rendering",
+    "axios",
+    "typescript",
     "ssr",
-    "axios"
+    "server-side-rendering",
+    "create-react-app",
+    "npm",
+    "npm-package",
+    "yarn",
+    "yarn-package"
   ],
   "dependencies": {
     "lru-cache": "^5.1.1"

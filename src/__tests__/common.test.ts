@@ -151,6 +151,7 @@ describe('getResponseData tests', () => {
     expect(options.handleData).toHaveBeenLastCalledWith(data, state)
     expect(returnedData).toEqual(newData)
   })
+
   it('should getResponseData work well with multiple responses', () => {
     const data = [
       {
@@ -172,14 +173,24 @@ describe('getResponseData tests', () => {
       handleData: jest.fn().mockReturnValue(newData)
     }
     const state: ReactUseApi.State = {
-      response: {
-        data,
-        config: {},
-        request: {},
-        status: 200,
-        statusText: 'ok',
-        headers: {}
-      },
+      response: [
+        {
+          data: data[0],
+          config: {},
+          request: {},
+          status: 200,
+          statusText: 'ok',
+          headers: {}
+        },
+        {
+          data: data[1],
+          config: {},
+          request: {},
+          status: 200,
+          statusText: 'ok',
+          headers: {}
+        }
+      ],
       loading: false,
       $cacheKey: 'foo/bar'
     }

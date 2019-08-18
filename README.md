@@ -27,18 +27,22 @@
 #### NPM
 
 ```sh
-npm i react-use-api axios
+$ npm i react-use-api axios
 ```
 
 #### Yarn
 
 ```sh
-yarn add react-use-api axios
+$ yarn add react-use-api axios
 ```
+
+## Gitbook Document
+
+[https://react-use-api.gitbook.io/react-use-api/](https://react-use-api.gitbook.io/react-use-api/)
 
 ## Usage
 
-### Provider
+### With ApiProvider
 
 ```jsx
 import React from 'react'
@@ -156,7 +160,7 @@ export const handleData = state => {
 
 ## Parameters
 
-#### Type
+#### Types
 
 ```ts
 const [data, state, request] = useApi(
@@ -170,13 +174,13 @@ const [data, state, request] = useApi(
 ```jsx
 const [data, state, request] = useApi(config, options)
 
-// request API data again
+// request the API data again
 request(config?: ReactUseApi.Config, keepState = true)
 ```
 
 ### Config
 
-The config can be an [Axios Request Config](https://github.com/axios/axios#request-config) or a url string.
+The config can be an [Axios Request Config](https://github.com/axios/axios#request-config) or a URL string.
 
 ```jsx
 const [data, state] = useApi('/api/foo/bar')
@@ -197,9 +201,9 @@ const [data, state] = useApi({
 
 ## State
 
-#### First State (before calling api)
+#### First State (before calling API)
 
-The first state has only one propery `loading` before calling api.
+The first state has only one property `loading` before calling API.
 
 | Name    | Type    | Default | Description                             |
 | ------- | ------- | ------- | --------------------------------------- |
@@ -276,17 +280,17 @@ export const render = async (req, axios) => {
 
 **The cache data is inserted into the html text as well.**
 
-> The cache data will be cleaned up after calling loadApiCache()
+> The cache data will be cleaned up after calling loadApiCache() by default
 
 ```html
 <script>
-  window.__USE_API_CACHE__ = '[{ ... }]'
+  window.__USE_API_CACHE__ = '[{ ... }]' // the cache data
 </script>
 ```
 
-##### Settings of apiContext (ReactUseApi.CustomContext)
+#### Settings of apiContext (ReactUseApi.CustomSettings)
 
-_Each property of settings is optional_
+_Each property is optional_
 
 | Name           | Type                                      | Default                             | Description                                                             |
 | -------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
@@ -300,7 +304,7 @@ _Each property of settings is optional_
 | debug          | boolean                                   | true                                | Set true to get debug message from console                              |
 | clientCacheVar | string                                    | 'USE_API_CACHE'                     | The JS variable name of cache data                                      |
 
-##### Arguments of injectSSRHtml
+#### Arguments of injectSSRHtml
 
 ```ts
 injectSSRHtml(
@@ -310,7 +314,7 @@ injectSSRHtml(
 
 ```
 
-#### SSR: Load cached api data
+#### SSR: Load cached API data
 
 ```jsx
 // src/index.jsx
