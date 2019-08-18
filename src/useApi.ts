@@ -23,7 +23,7 @@ export const useApi = (
   const {
     settings: { cache, debug },
     isSSR,
-    ssrConfigs
+    collection: { ssrConfigs, cacheKeys }
   } = context
   const cacheKey = JSON.stringify(config)
   const options = useMemo(() => handleUseApiOptions(opt, cacheKey), [
@@ -49,7 +49,10 @@ export const useApi = (
       cache.set(feedKey, true)
     }
   } else if (isSSR) {
-    debug && console.log('[ReactUseApi][Collect]', cacheKey)
+    if (!cacheKeys.has(cacheKey)) {
+      cacheKeys.add(cacheKey)
+      debug && console.log('[ReactUseApi][Collect]', cacheKey)
+    }
     ssrConfigs.push({
       config,
       cacheKey

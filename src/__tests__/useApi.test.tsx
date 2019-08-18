@@ -92,7 +92,10 @@ describe('useApi tests', () => {
       dependencies: undefined,
       data: apiData
     })
-    expect(context.ssrConfigs.length).toBe(0)
+    const {
+      collection: { ssrConfigs }
+    } = context
+    expect(ssrConfigs.length).toBe(0)
 
     rerender()
 
@@ -277,7 +280,9 @@ describe('useApi tests', () => {
           }),
         { wrapper }
       )
-      const { ssrConfigs } = context
+      const {
+        collection: { ssrConfigs, cacheKeys }
+      } = context
       expect(console.log).toHaveBeenCalledWith(
         '[ReactUseApi][Collect]',
         cacheKey
@@ -290,6 +295,7 @@ describe('useApi tests', () => {
           cacheKey
         }
       ])
+      expect(cacheKeys.size).toBe(1)
       expect(cache.has(feedKey)).toBe(false)
     })
   })

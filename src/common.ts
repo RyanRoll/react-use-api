@@ -22,8 +22,11 @@ export const initState = {
   $cacheKey: ''
 }
 
-export const configure = (context: ReactUseApi.CustomContext) => {
-  if (context.$isConfigured) {
+export const configure = (
+  context: ReactUseApi.CustomContext,
+  isSSR = false
+) => {
+  if (context.isConfigured) {
     return context as ReactUseApi.Context
   }
   const { settings: custom } = context
@@ -37,11 +40,16 @@ export const configure = (context: ReactUseApi.CustomContext) => {
       }
     })
   }
+  isSSR =
+    isSSR !== true && isFunction(settings.isSSR) ? !!settings.isSSR() : isSSR
   Object.assign(context, {
     settings,
-    ssrConfigs: [],
-    isSSR: isFunction(settings.isSSR) ? !!settings.isSSR() : false,
-    $isConfigured: true
+    isSSR,
+    isConfigured: true,
+    collection: {
+      ssrConfigs: [],
+      cacheKeys: new Set<string>()
+    } as ReactUseApi.SSRCollection
   })
   return context as ReactUseApi.Context
 }

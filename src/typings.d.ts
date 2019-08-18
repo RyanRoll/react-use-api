@@ -18,13 +18,21 @@ declare namespace ReactUseApi {
 
   interface Context {
     settings?: Settings
-    ssrConfigs?: SSRConfig[]
     renderSSR?: Settings['renderSSR']
     isSSR?: boolean
-    $isConfigured?: boolean
+    collection?: SSRCollection
+    isConfigured?: boolean
   }
   interface CustomContext extends Omit<Context, 'settings'> {
     settings?: CustomSettings
+  }
+  interface SSRCollection {
+    ssrConfigs: SSRConfigs[]
+    cacheKeys: Set<string>
+  }
+  interface SSRConfigs {
+    config: Config
+    cacheKey: string
   }
   interface ApiProviderProps {
     context?: CustomContext
@@ -53,10 +61,6 @@ declare namespace ReactUseApi {
     prevData?: Data
     prevState?: State
     dependencies?: Options['dependencies']
-  }
-  interface SSRConfig {
-    config: Config
-    cacheKey: string
   }
   interface JsonObject {
     [key: string]: any

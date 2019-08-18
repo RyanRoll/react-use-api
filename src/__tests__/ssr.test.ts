@@ -25,7 +25,8 @@ afterEach(() => {
 
 const copySettings = () => ({
   ...defaultSettings,
-  cache: new LRU<string, ReactUseApi.CacheData | any>()
+  cache: new LRU<string, ReactUseApi.CacheData | any>(),
+  isSSR: () => true
 })
 const testCache = new LRU<string, ReactUseApi.CacheData | any>()
 testCache.set('foo', 'bar')
@@ -65,9 +66,10 @@ describe('feedRequests tests', () => {
       }
     })
     const {
-      settings: { cache }
+      settings: { cache },
+      collection
     } = context
-    context.ssrConfigs = ssrConfigs
+    collection.ssrConfigs = ssrConfigs
     const response = {
       data: {
         message: 'ok'
@@ -75,7 +77,9 @@ describe('feedRequests tests', () => {
     }
     axiosAll.mockReset().mockResolvedValue(response)
     const ssrHtml = await feedRequests(context, '')
+    const { cacheKeys } = collection
     expect(ssrConfigs.length).toBe(0)
+    expect(cacheKeys.size).toBe(0)
     expect(ssrHtml).toBe('<div>Hello World!</div>')
     expect(cache.dump()).toEqual([
       { k: 'abc', v: { response }, e: 0 },
@@ -102,9 +106,10 @@ describe('feedRequests tests', () => {
       }
     })
     const {
-      settings: { cache }
+      settings: { cache },
+      collection
     } = context
-    context.ssrConfigs = ssrConfigs
+    collection.ssrConfigs = ssrConfigs
     const error = {
       response: {
         data: {
@@ -116,7 +121,18 @@ describe('feedRequests tests', () => {
     console.log = jest.fn()
     const ssrHtml = await feedRequests(context, '')
     expect(ssrConfigs.length).toBe(0)
+    expect(console.log).toHaveBeenCalledWith(
+      '[ReactUseApi][Collecting Requests]'
+    )
     expect(console.log).toHaveBeenCalledWith('[ReactUseApi][Fetch]', 'foo')
+    expect(console.log).toHaveBeenCalledWith(
+      '[ReactUseApi][Requests Count] =',
+      0
+    )
+    expect(console.log).toHaveBeenCalledWith(
+      '[ReactUseApi][Executed times] =',
+      1
+    )
     expect(ssrHtml).toBe('<div>Hello World!</div>')
     expect(cache.dump()).toEqual([
       { k: 'foo', v: { error: error.response }, e: 0 }
@@ -141,9 +157,10 @@ describe('feedRequests tests', () => {
       }
     })
     const {
-      settings: { cache }
+      settings: { cache },
+      collection
     } = context
-    context.ssrConfigs = ssrConfigs
+    collection.ssrConfigs = ssrConfigs
     const error = {
       message: 'fail'
     }
@@ -162,7 +179,9 @@ describe('feedRequests tests', () => {
       }
     })
     console.log = jest.fn()
-    const { ssrConfigs } = context
+    const {
+      collection: { ssrConfigs }
+    } = context
     const ssrHtml = await feedRequests(context, '')
     expect(console.log).toHaveBeenCalledWith(
       '[ReactUseApi][Executed times] =',
@@ -178,7 +197,8 @@ describe('feedRequests tests', () => {
         ...copySettings()
       }
     })
-    context.ssrConfigs = [
+    const { collection } = context
+    collection.ssrConfigs = [
       {
         config: {
           url: '/api/v1/foo/bar'
@@ -206,12 +226,13 @@ describe('injectSSRHtml tests', () => {
         renderSSR
       }
     })
-    const { settings } = context
+    const { settings, isSSR } = context
     const { cache } = settings
     cache.reset = jest.fn()
     cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
     expect.hasAssertions()
     const ssrHtml = await injectSSRHtml(context)
+    expect(isSSR).toBe(true)
     expect(renderSSR).toHaveBeenCalled()
     expect(cache.reset).toHaveBeenCalled()
     expect(feedRequests).toHaveBeenLastCalledWith(context, html)

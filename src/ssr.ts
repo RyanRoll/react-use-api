@@ -5,17 +5,23 @@ export const feedRequests = async (
   ssrHtml: string,
   maxRequests = context.settings.maxRequests
 ) => {
-  const { settings, ssrConfigs } = context
+  const {
+    settings,
+    collection: { ssrConfigs, cacheKeys }
+  } = context
   const { cache, renderSSR, debug } = settings
-
   if (!ssrConfigs.length) {
-    debug &&
+    if (debug) {
+      console.log('[ReactUseApi][Requests Count] =', cacheKeys.size)
       console.log(
         '[ReactUseApi][Executed times] =',
         settings.maxRequests - maxRequests
       )
+    }
+    cacheKeys.clear()
     return ssrHtml // done
   }
+  debug && console.log('[ReactUseApi][Collecting Requests]')
   if (maxRequests === 0) {
     throw new Error('Maximum executing times while fetching axios requests')
   }
@@ -50,7 +56,7 @@ export const injectSSRHtml = async (
   context: ReactUseApi.CustomContext,
   renderSSR?: ReactUseApi.Settings['renderSSR']
 ) => {
-  context = configure(context)
+  context = configure(context, true)
   const { settings } = context
   settings.renderSSR = renderSSR || settings.renderSSR
   const { cache, useCacheData, clientCacheVar } = settings

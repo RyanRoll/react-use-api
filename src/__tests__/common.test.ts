@@ -20,18 +20,36 @@ const noop = function() {}
 describe('configure tests', () => {
   it('should configure work without custom settings', () => {
     const context = configure({})
-    const { settings, ssrConfigs, isSSR, $isConfigured } = context
+    const {
+      settings,
+      collection: { ssrConfigs, cacheKeys },
+      isSSR,
+      isConfigured
+    } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
       cache: new LRU()
     })
-    expect(ssrConfigs).toEqual([])
-    expect(typeof isSSR).toBe('boolean')
-    expect($isConfigured).toBe(true)
+    expect(ssrConfigs.length).toBe(0)
+    expect(cacheKeys.size).toBe(0)
+    expect(isSSR).toBe(false)
+    expect(isConfigured).toBe(true)
+    expect(settings.renderSSR()).toEqual('')
+  })
+
+  it('should configure as expected if the second argument isSSR = true', () => {
+    const context = configure({}, true)
+    const { settings, isSSR } = context
+    expect(settings).toMatchObject({
+      ...defaultSettings,
+      cache: new LRU()
+    })
+    expect(isSSR).toBe(true)
   })
 
   it('should configure work with custom settings', () => {
     const customSSRConfig = []
+    const customCacheKeys = new Set<string>()
     const custom = {
       settings: {
         clientCacheVar: '__FOO_BAR__',
@@ -39,24 +57,33 @@ describe('configure tests', () => {
         cache: new LRU<string, ReactUseApi.CacheData>(),
         maxRequests: 100,
         renderSSR: noop,
-        isSSR: noop,
+        isSSR: () => true,
         useCacheData: false,
         deleteAfterLoading: false
       },
-      ssrConfigs: customSSRConfig,
-      isSSR: true,
-      $isConfigured: false
+      collection: {
+        ssrConfigs: customSSRConfig,
+        cacheKeys: customCacheKeys
+      },
+      isSSR: false,
+      isConfigured: false
     }
     const context = configure(custom)
-    const { settings, ssrConfigs, isSSR, $isConfigured } = context
+    const {
+      settings,
+      collection: { ssrConfigs, cacheKeys },
+      isSSR,
+      isConfigured
+    } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
       ...custom.settings
     })
     expect(settings).not.toBe(defaultSettings)
     expect(ssrConfigs).not.toBe(customSSRConfig)
-    expect(isSSR).toBe(false)
-    expect($isConfigured).toBe(true)
+    expect(cacheKeys.size).toBe(0)
+    expect(isSSR).toBe(true)
+    expect(isConfigured).toBe(true)
   })
 })
 
