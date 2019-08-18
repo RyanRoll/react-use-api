@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/RyanRoll/react-use-api/compare/v1.0.5...v1.0.6) (2019-08-18)
+
+
+### Bug Fixes
+
+* **Unit Test:** add more info logs for debugging and adjust the associated test codes ([9fb6504](https://github.com/RyanRoll/react-use-api/commit/9fb6504))
+
 ## [1.0.5](https://github.com/RyanRoll/react-use-api/compare/v1.0.4...v1.0.5) (2019-08-18)
 
 
