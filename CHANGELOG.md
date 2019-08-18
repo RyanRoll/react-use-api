@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/RyanRoll/react-use-api/compare/v1.0.3...v1.0.4) (2019-08-17)
+
+
+### Bug Fixes
+
+* **readme:** amend readme and add threshold for coverage ([008f3b0](https://github.com/RyanRoll/react-use-api/commit/008f3b0))
+
 ## [1.0.3](https://github.com/RyanRoll/react-use-api/compare/v1.0.2...v1.0.3) (2019-08-17)
 
 
