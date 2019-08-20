@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/RyanRoll/react-use-api/compare/v1.0.6...v1.0.7) (2019-08-20)
+
+
+### Bug Fixes
+
+* **shouldRequest:** A bug fix, the option shouldRequest did not work properly due to the previous fi ([8b5aa6a](https://github.com/RyanRoll/react-use-api/commit/8b5aa6a))
+
 ## [1.0.6](https://github.com/RyanRoll/react-use-api/compare/v1.0.5...v1.0.6) (2019-08-18)
 
 
