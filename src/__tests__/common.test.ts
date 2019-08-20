@@ -56,7 +56,7 @@ describe('configure tests', () => {
         axios: axios.create(),
         cache: new LRU<string, ReactUseApi.CacheData>(),
         maxRequests: 100,
-        renderSSR: noop,
+        renderSSR: () => '',
         isSSR: () => true,
         useCacheData: false,
         deleteAfterLoading: false

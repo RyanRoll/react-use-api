@@ -472,6 +472,8 @@ describe('useApi tests', () => {
       }
     })
     let shouldFetchData = false
+    const isRequesting = { current: false }
+    const spy = jest.spyOn(React, 'useRef').mockReturnValue(isRequesting)
     const options = {
       shouldRequest() {
         if (shouldFetchData) {
@@ -492,19 +494,19 @@ describe('useApi tests', () => {
       { wrapper }
     )
     await waitForNextUpdate()
+    expect(isRequesting.current).toBe(false)
 
     // first rerender test
     const [, state] = result.current
     rerender()
 
-    const [nData, nState, request] = result.current
+    const [nData, nState] = result.current
     // should be same
     expect(nState).toBe(state)
 
     shouldFetchData = true
-    act(() => {
-      request()
-    })
+    rerender()
+    expect(isRequesting.current).toBe(true)
     await waitForNextUpdate()
 
     const [uData, uState] = result.current
@@ -519,15 +521,17 @@ describe('useApi tests', () => {
       error: undefined,
       data: apiData,
       prevState: {
-        loading: false,
+        loading: true,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
-        prevData: apiData,
+        prevData: undefined,
         response: { status: 200, data: apiData, headers: undefined },
         dependencies: undefined,
         error: undefined,
         data: apiData
       }
     })
+    expect(isRequesting.current).toBe(false)
+    spy.mockRestore()
   })
 
   it('should watch work well', async () => {

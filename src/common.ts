@@ -8,8 +8,8 @@ export const defaultSettings = {
   maxRequests: 50,
   autoPurgeCache: true,
   useCacheData: true,
-  renderSSR: (() => '') as Function,
-  isSSR: (() => typeof window === 'undefined') as Function,
+  renderSSR: (() => '') as (...args: any[]) => string,
+  isSSR: (() => typeof window === 'undefined') as (...args: any[]) => boolean,
   debug: false,
   clientCacheVar: '__USE_API_CACHE__'
 }
@@ -67,12 +67,12 @@ export async function axiosAll(
   config: ReactUseApi.Config | ReactUseApi.MultiConfigs
 ): Promise<ReactUseApi.ApiResponse | ReactUseApi.ApiResponse[]> {
   const {
-    settings: { axios }
+    settings: { axios: client }
   } = context
   const isMulti = Array.isArray(config)
   const requests = ((isMulti
     ? config
-    : [config]) as ReactUseApi.MultiConfigs).map(cfg => axios(cfg))
+    : [config]) as ReactUseApi.MultiConfigs).map(cfg => client(cfg))
   try {
     const responses = await Promise.all<ReactUseApi.ApiResponse>(requests)
     responses.forEach(tidyResponse)

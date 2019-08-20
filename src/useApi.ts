@@ -1,4 +1,12 @@
-import { useEffect, useReducer, useMemo, useContext, useCallback } from 'react'
+import {
+  useEffect,
+  useReducer,
+  useMemo,
+  useContext,
+  useCallback,
+  useRef
+} from 'react'
+import invariant from 'invariant'
 
 import { ApiContext } from './context'
 import {
@@ -14,11 +22,13 @@ export const useApi = (
   config: ReactUseApi.Config | string,
   opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
 ) => {
+  const rawConfig = config
   if (typeof config === 'string') {
     config = {
       url: config
     }
   }
+  invariant(verifyConfig(config), `API config "${rawConfig}" is invalid.`)
   const context = useContext(ApiContext)
   const {
     settings: { cache, debug },
@@ -28,8 +38,7 @@ export const useApi = (
   const cacheKey = JSON.stringify(config)
   const options = useMemo(() => handleUseApiOptions(opt, cacheKey), [
     opt,
-    cacheKey,
-    context
+    cacheKey
   ])
   const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
   const feedKey = `feed:${cacheKey}`
@@ -58,13 +67,15 @@ export const useApi = (
       cacheKey
     })
   }
-  let [state, dispatch] = useReducer(reducer, defaultState)
+  const [state, dispatch] = useReducer(reducer, defaultState)
+  const isRequesting = useRef<boolean>(false)
   const request = useCallback(
     async (cfg = config as ReactUseApi.Config, keepState = true) => {
       // update state's cachekey for saving the prevState when requesting (refreshing)
       if (keepState) {
         state.$cacheKey = cacheKey
       }
+      isRequesting.current = true
       return fetchApi(context, cfg, options, dispatch)
     },
     [context, cacheKey, options, dispatch, state]
@@ -76,9 +87,17 @@ export const useApi = (
     [cacheKey]
   )
   const { shouldRequest, watch } = options
-  const { loading, data } = state
-  if (loading && isFunction(shouldRequest) && shouldRequest() === true) {
+  // for each re-rendering
+  if (
+    !isRequesting.current &&
+    isFunction(shouldRequest) &&
+    shouldRequest() === true
+  ) {
     metrics.refreshFlag = Date.now()
+  }
+  const { loading, data } = state
+  if (!loading && isRequesting.current) {
+    isRequesting.current = false
   }
   useEffect(() => {
     const isFeeding = cache.get(feedKey)
@@ -183,6 +202,14 @@ export const handleUseApiOptions = (
       } as ReactUseApi.Options)
   options.$cacheKey = cacheKey
   return options
+}
+
+export const verifyConfig = (config: ReactUseApi.Config) => {
+  return isObject(config)
+    ? !!(config as ReactUseApi.SingleConfig).url
+    : Array.isArray(config)
+    ? config.every(each => !!each.url)
+    : false
 }
 
 export default useApi

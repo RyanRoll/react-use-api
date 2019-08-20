@@ -1,0 +1,41 @@
+{
+  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "rules": {
+    "quotemark": [
+      true,
+      "single",
+      "jsx-double",
+      "avoid-escape",
+      "avoid-template"
+    ],
+    "semicolon": [true, "never"],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "object-literal-key-quotes": [true, "as-needed"],
+    "member-access": [true, "no-public"],
+    "max-classes-per-file": false,
+    "no-console": [false, "log", "error", "trace"],
+    "no-implicit-dependencies": [false, "dev"],
+    "no-empty-interface": false,
+    "no-bitwise": false,
+    "jsx-boolean-value": false,
+    "jsx-no-lambda": false,
+    "no-submodule-imports": false,
+    "interface-name": [false, "never-prefix"],
+    "prefer-const": [true, { "destructuring": "all" }],
+    "no-unused-expression": false
+  },
+  "linterOptions": {
+    "include": ["src/**/*"],
+    "exclude": [
+      "node_modules",
+      "build",
+      "scripts",
+      "acceptance-tests",
+      "webpack",
+      "jest",
+      "**/__tests__/*",
+      "src/typings.d.ts"
+    ]
+  }
+}

@@ -25,6 +25,12 @@ export const feedRequests = async (
   if (maxRequests === 0) {
     throw new Error('Maximum executing times while fetching axios requests')
   }
+
+  // The algorithm is collecting the unobtained API request config from the previous renderSSR()
+  // , but here only fetches the API data from the first config and again uses renderSSR() to feed the data to its components.
+  // This approach may look like inefficient but rather stable, since each config may rely on the data from useApi().
+  // However,  it is possible that no one request config that depends on another one, only one renderSSR() is needed
+  // , but who can guarantee that every developer is able to consider this dependency?
   const { config, cacheKey } = ssrConfigs[0] // fetch the first
   const cacheData = cache.get(cacheKey)
   if (!cacheData) {
@@ -61,7 +67,7 @@ export const injectSSRHtml = async (
   settings.renderSSR = renderSSR || settings.renderSSR
   const { cache, useCacheData, clientCacheVar } = settings
   cache.reset()
-  // collect axios calls first
+  // collect API requests first
   let ssrHtml = settings.renderSSR()
   ssrHtml = await exports.feedRequests(context, ssrHtml)
   if (useCacheData) {

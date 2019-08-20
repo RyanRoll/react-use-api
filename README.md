@@ -9,7 +9,7 @@
 
 [![npm](https://img.shields.io/npm/v/react-use-api?label=version&color=43A047)](https://www.npmjs.com/package/react-use-api)
 [![Build Status](https://travis-ci.org/RyanRoll/react-use-api.svg?branch=master)](https://travis-ci.org/RyanRoll/react-use-api)
-[![Coverage Status](https://coveralls.io/repos/github/RyanRoll/react-use-api/badge.svg?branch=feat/develop)](https://coveralls.io/github/RyanRoll/react-use-api?branch=feat/develop)
+[![Coverage Status](https://coveralls.io/repos/github/RyanRoll/react-use-api/badge.svg?branch=master)](https://coveralls.io/github/RyanRoll/react-use-api?branch=master)
 ![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/RyanRoll/react-use-api/dev/react?color=EF5350)
 ![npm type definitions](https://img.shields.io/npm/types/react-use-api?color=0277BD)
 ![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api?color=5C6BC0)
@@ -90,29 +90,32 @@ export const Main = () => {
 ### Advanced Usage
 
 ```jsx
-import React, { useState, useCallback } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import useApi from 'react-use-api'
 
 export const Main = () => {
   const [offset, setOffset] = useState(0)
   const limit = 10
-  const dependencies = {
-    limit
-  }
+  const options = useMemo(
+    () => ({
+      handleData,
+      dependencies: {
+        limit
+      }
+    }),
+    [limit]
+  )
   // hasMore is a custom state here
   const [data, { loading, error, hasMore = true }, request] = useApi(
     getAPiList(),
-    {
-      handleData,
-      dependencies
-    }
+    options
   )
   const loadMore = useCallback(() => {
     const nextOffset = offset + limit
     // fetch the data and keep the state and prevData
     request(getAPiList(nextOffset, limit))
     setOffset(nextOffset)
-  }, [offset, setOffset])
+  }, [offset])
 
   return (
     <>
@@ -196,7 +199,7 @@ const [data, state] = useApi({
 | ------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response. **IMPORTANT** Using any state setter in handleData is dangerous, which will cause the component re-rendering infinitely while SSR rendering. |
 | dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                              |
-| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch.                                                                                     |
+| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch. This option is helpful if you want to re-request an API when a route change occurs. |
 | watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                          |
 
 ## State

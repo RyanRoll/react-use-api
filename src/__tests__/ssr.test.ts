@@ -307,3 +307,5 @@ describe('loadApiCache tests', () => {
     expect(cache.length).toBe(0)
   })
 })
+
+// TBD an integration test
