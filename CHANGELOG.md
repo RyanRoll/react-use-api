@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/RyanRoll/react-use-api/compare/v1.0.7...v1.0.8) (2019-08-21)
+
+
+### Bug Fixes
+
+* **npm:** try to publish a new npm version since 1.0.7 has been swallowed by npm ([476d2c9](https://github.com/RyanRoll/react-use-api/commit/476d2c9))
+
 ## [1.0.7](https://github.com/RyanRoll/react-use-api/compare/v1.0.6...v1.0.7) (2019-08-20)
 
 
