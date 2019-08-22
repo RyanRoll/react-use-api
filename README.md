@@ -1,6 +1,8 @@
 <div align="center">
   <h1>
     <br/>
+    <img width="100" src="./icon.svg">
+    <br/>
     React Use API
     <br />
     <br />
@@ -340,12 +342,6 @@ ReactDOM[method](
 )
 ```
 
-## Credits
-
-`react-use-api` is heavily inspired by [axios-hooks](https://github.com/simoneb/axios-hooks). We appreciate it so much.
-
-Since the code architecture and SSR support are very different from axios-hooks, we have to create this package to provide more functionality instead of filing PRs to axios-hooks.
-
 ## Test
 
 ```bash
@@ -355,3 +351,11 @@ $ npm test
 ## License
 
 MIT
+
+## Credits
+
+`react-use-api` is heavily inspired by [axios-hooks](https://github.com/simoneb/axios-hooks). We appreciate it so much.
+
+Since the code architecture and SSR support are very different from axios-hooks, we have to create this package to provide more functionality instead of filing PRs to axios-hooks.
+
+Icons made by [Eucalyp](https://www.flaticon.com/authors/eucalyp) from [www.flaticon.com](https://www.flaticon.com) is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0).
