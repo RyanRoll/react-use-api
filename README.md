@@ -1,7 +1,6 @@
 <div align="center">
   <h1>
-    <br/>
-    <img width="100" src="./icon.svg">
+    <img width="120" src="./icon.svg">
     <br/>
     React Use API
     <br />
