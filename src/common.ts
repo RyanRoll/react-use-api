@@ -19,6 +19,7 @@ export const ACTIONS = {
 }
 export const initState = {
   loading: false,
+  fromCache: false,
   $cacheKey: ''
 }
 

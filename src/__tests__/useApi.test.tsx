@@ -69,6 +69,7 @@ describe('useApi tests', () => {
     expect(data).toBeUndefined()
     expect(state).toEqual({
       loading: true,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       error: undefined
     })
@@ -80,11 +81,13 @@ describe('useApi tests', () => {
     expect(uData).toEqual(apiData)
     expect(uState).toEqual({
       loading: false,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       error: undefined,
       prevData: undefined,
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
         error: undefined
       },
@@ -119,6 +122,7 @@ describe('useApi tests', () => {
     expect(data).toBeUndefined()
     expect(state).toEqual({
       loading: true,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       error: undefined
     })
@@ -130,11 +134,13 @@ describe('useApi tests', () => {
     expect(uData).toEqual(apiData)
     expect(uState).toEqual({
       loading: false,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       error: undefined,
       prevData: undefined,
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
         error: undefined
       },
@@ -169,7 +175,6 @@ describe('useApi tests', () => {
         data: apiData
       }
     })
-    const feedKey = `feed:${cacheKey}`
     const wrapper = createWrapper(context)
     const { result, waitForNextUpdate, rerender } = renderHook(
       () =>
@@ -180,15 +185,14 @@ describe('useApi tests', () => {
     )
     const [data, state] = result.current
     expect(console.log).toHaveBeenCalledWith('[ReactUseApi][Feed]', cacheKey)
-    expect(cache.has(cacheKey)).toBe(false)
-    expect(cache.del).toHaveBeenCalledWith(feedKey)
     expect(data).toEqual(apiData)
     expect(state).toEqual({
       loading: false,
+      fromCache: true,
       $cacheKey: cacheKey,
       error: undefined,
       prevData: undefined,
-      prevState: { loading: false, $cacheKey: '' },
+      prevState: initState,
       response: {
         data: apiData
       },
@@ -226,7 +230,6 @@ describe('useApi tests', () => {
           data: apiData
         }
       })
-      const feedKey = `feed:${cacheKey}`
       const wrapper = createWrapper(context)
       const { result, waitForNextUpdate, rerender } = renderHook(
         () =>
@@ -240,10 +243,11 @@ describe('useApi tests', () => {
       expect(data).toEqual(apiData)
       expect(state).toEqual({
         loading: false,
+        fromCache: false,
         $cacheKey: cacheKey,
         error: undefined,
         prevData: undefined,
-        prevState: { loading: false, $cacheKey: '' },
+        prevState: initState,
         response: {
           data: apiData
         },
@@ -258,8 +262,7 @@ describe('useApi tests', () => {
       const [uData, uState] = result.current
       expect(uData).toBe(data)
       expect(uState).toEqual(state)
-      expect(cache.has(cacheKey)).toBe(true)
-      expect(cache.has(feedKey)).toBe(false)
+      expect(cache.has(cacheKey)).toBe(false)
     })
 
     it('should work well without cache data', async () => {
@@ -271,7 +274,6 @@ describe('useApi tests', () => {
         }
       } as ReactUseApi.CustomContext
       const cacheKey = '{"url":"/api/v1/foo/bar"}'
-      const feedKey = `feed:${cacheKey}`
       const wrapper = createWrapper(context)
       renderHook(
         () =>
@@ -296,7 +298,6 @@ describe('useApi tests', () => {
         }
       ])
       expect(cacheKeys.size).toBe(1)
-      expect(cache.has(feedKey)).toBe(false)
     })
   })
 
@@ -324,11 +325,13 @@ describe('useApi tests', () => {
     expect(data).toEqual(apiData)
     expect(state).toEqual({
       loading: true,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       error: undefined,
       prevData: undefined,
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
         error: undefined
       },
@@ -343,6 +346,7 @@ describe('useApi tests', () => {
     expect(uData).toEqual(apiData)
     expect(uState).toEqual({
       loading: false,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       error: undefined,
       prevData: { foo: { bar: true } },
@@ -351,6 +355,7 @@ describe('useApi tests', () => {
       data: { foo: { bar: true } },
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
         error: undefined,
         prevData: undefined,
@@ -472,8 +477,8 @@ describe('useApi tests', () => {
       }
     })
     let shouldFetchData = false
-    const isRequesting = { current: false }
-    const spy = jest.spyOn(React, 'useRef').mockReturnValue(isRequesting)
+    const ref = { current: { isRequesting: false } }
+    const spy = jest.spyOn(React, 'useRef').mockReturnValue(ref)
     const options = {
       shouldRequest() {
         if (shouldFetchData) {
@@ -494,7 +499,7 @@ describe('useApi tests', () => {
       { wrapper }
     )
     await waitForNextUpdate()
-    expect(isRequesting.current).toBe(false)
+    expect(ref.current.isRequesting).toBe(false)
 
     // first rerender test
     const [, state] = result.current
@@ -506,7 +511,7 @@ describe('useApi tests', () => {
 
     shouldFetchData = true
     rerender()
-    expect(isRequesting.current).toBe(true)
+    expect(ref.current.isRequesting).toBe(true)
     await waitForNextUpdate()
 
     const [uData, uState] = result.current
@@ -514,6 +519,7 @@ describe('useApi tests', () => {
     expect(uData).toEqual(apiData)
     expect(uState).toEqual({
       loading: false,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       prevData: apiData,
       response: { status: 200, data: apiData, headers: undefined },
@@ -522,6 +528,7 @@ describe('useApi tests', () => {
       data: apiData,
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
         prevData: undefined,
         response: { status: 200, data: apiData, headers: undefined },
@@ -530,7 +537,7 @@ describe('useApi tests', () => {
         data: apiData
       }
     })
-    expect(isRequesting.current).toBe(false)
+    expect(ref.current.isRequesting).toBe(false)
     spy.mockRestore()
   })
 
@@ -573,6 +580,7 @@ describe('useApi tests', () => {
     expect(uData).toEqual(apiData)
     expect(uState).toEqual({
       loading: false,
+      fromCache: false,
       $cacheKey: '{"url":"/api/v1/foo/bar"}',
       prevData: apiData,
       response: { status: 200, data: apiData, headers: undefined },
@@ -581,6 +589,7 @@ describe('useApi tests', () => {
       data: apiData,
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '{"url":"/api/v1/foo/bar"}',
         prevData: undefined,
         response: { status: 200, data: apiData, headers: undefined },
@@ -613,11 +622,13 @@ describe('useApi tests', () => {
     expect(data).toEqual([apiData, listData])
     expect(state).toEqual({
       loading: false,
+      fromCache: false,
       $cacheKey: '[{"url":"/api/v1/foo/bar"},{"url":"/api/v1/list"}]',
       error: undefined,
       prevData: undefined,
       prevState: {
         loading: true,
+        fromCache: false,
         $cacheKey: '[{"url":"/api/v1/foo/bar"},{"url":"/api/v1/list"}]',
         error: undefined
       },
@@ -800,6 +811,7 @@ describe('reducer tests', () => {
     expect(newState).toEqual({
       ...state,
       loading: true,
+      fromCache: false,
       error: undefined,
       $cacheKey: '/foo/bar'
     })
@@ -808,6 +820,7 @@ describe('reducer tests', () => {
   it('should get previous state with loading = true from REQUEST_START', () => {
     const state = {
       myData: '123',
+      fromCache: false,
       loading: false,
       $cacheKey: '/foo/bar'
     } as ReactUseApi.State
@@ -822,6 +835,7 @@ describe('reducer tests', () => {
     expect(newState).toEqual({
       ...state,
       loading: true,
+      fromCache: false,
       error: undefined,
       $cacheKey: '/foo/bar'
     })
@@ -830,6 +844,7 @@ describe('reducer tests', () => {
   it('should reset to initState from REQUEST_START if cacheKey changes', () => {
     const state = {
       myData: '123',
+      fromCache: false,
       loading: false,
       $cacheKey: '/foo/bar'
     } as ReactUseApi.State
@@ -843,6 +858,7 @@ describe('reducer tests', () => {
     expect(newState).not.toBe(state)
     expect(newState).toEqual({
       loading: true,
+      fromCache: false,
       error: undefined,
       $cacheKey: '/abc/def'
     })
@@ -868,8 +884,9 @@ describe('reducer tests', () => {
     expect(newState).not.toBe(state)
     expect(newState).toEqual({
       loading: false,
+      fromCache: false,
       prevData: undefined,
-      prevState: { loading: false, $cacheKey: '' },
+      prevState: initState,
       response: { data: { message: 'ok' } },
       dependencies: { foo: 'bar' },
       error: undefined,
@@ -898,8 +915,9 @@ describe('reducer tests', () => {
     expect(newState).not.toBe(state)
     expect(newState).toEqual({
       loading: false,
+      fromCache: false,
       prevData: undefined,
-      prevState: { loading: false, $cacheKey: '' },
+      prevState: initState,
       response: undefined,
       dependencies: { foo: 'bar' },
       error: { data: { message: 'fail' } },

@@ -209,9 +209,10 @@ const [data, state] = useApi({
 
 The first state has only one property `loading` before calling API.
 
-| Name    | Type    | Default | Description                             |
-| ------- | ------- | ------- | --------------------------------------- |
-| loading | boolean | false   | To indicate whether calling api or not. |
+| Name      | Type    | Default | Description                                       |
+| --------- | ------- | ------- | ------------------------------------------------- |
+| loading   | boolean | false   | To indicate whether calling api or not.           |
+| fromCache | boolean | false   | To tell whether the data come from SSR API cache. |
 
 #### Full State
 
@@ -220,6 +221,7 @@ The is the full state data structure after the api has responded.
 | Name          | Type              | Default   | Description                                                                                                                                                                       |
 | ------------- | ----------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | loading       | boolean           | false     | To indicate whether calling api or not.                                                                                                                                           |
+| fromCache     | boolean           | false     | To tell whether the data come from SSR API cache.                                                                                                                                 |
 | data          | any               | undefined | The processed data provided from `options.handleData`.                                                                                                                            |
 | response      | AxiosResponse     | undefined | The Axios' response.                                                                                                                                                              |
 | error         | AxiosError        | undefined | The Axios' error.                                                                                                                                                                 |
@@ -262,6 +264,7 @@ import App from '../../src/App'
 
 export const render = async (req, axios) => {
   const { url } = req
+  // configure SSR settings
   const apiContext = {
     settings: {
       axios, // your custom axios instance
@@ -292,7 +295,7 @@ export const render = async (req, axios) => {
 </script>
 ```
 
-#### Settings of apiContext (ReactUseApi.CustomSettings)
+#### SSR Settings of apiContext (ReactUseApi.CustomSettings)
 
 _Each property is optional_
 

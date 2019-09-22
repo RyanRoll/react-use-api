@@ -15,11 +15,14 @@ describe('ApiProvider tests', () => {
       context = useContext(ApiContext)
       return <div>Hello World</div>
     }
-    const testRenderer = TestRenderer.create(
-      <ApiProvider>
-        <App />
-      </ApiProvider>
-    )
+    let testRenderer: TestRenderer.ReactTestRenderer
+    TestRenderer.act(() => {
+      testRenderer = TestRenderer.create(
+        <ApiProvider>
+          <App />
+        </ApiProvider>
+      )
+    })
     const { settings, isSSR } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
@@ -30,16 +33,26 @@ describe('ApiProvider tests', () => {
   })
 
   it('should context work as expected', () => {
-    const context: ReactUseApi.Context = {}
-    const testRenderer = TestRenderer.create(<ApiProvider context={context} />)
+    const cache = new LRU<string, any>()
+    cache.set('foo', 'bar')
+    const context: ReactUseApi.CustomContext = {
+      settings: {
+        cache
+      }
+    }
+    let testRenderer: TestRenderer.ReactTestRenderer
+    TestRenderer.act(() => {
+      testRenderer = TestRenderer.create(<ApiProvider context={context} />)
+    })
     const { root } = testRenderer
     const instance = root.findByType(ApiProvider)
     const { settings, isSSR } = context
     expect(instance.props.context).toBe(context)
     expect(settings).toMatchObject({
       ...defaultSettings,
-      cache: new LRU()
+      cache
     })
     expect(isSSR).toBe(false) // window exists in jest
+    expect(cache.keys().length).toEqual(0)
   })
 })

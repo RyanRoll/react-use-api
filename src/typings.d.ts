@@ -55,6 +55,7 @@ declare namespace ReactUseApi {
   interface Action extends CacheData {
     type: string
     options?: Options
+    fromCache?: boolean
   }
   interface State extends InitState, CacheData, JsonObject {
     data?: Data

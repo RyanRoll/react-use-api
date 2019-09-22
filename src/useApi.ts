@@ -40,8 +40,13 @@ export const useApi = (
     opt,
     cacheKey
   ])
+  const ref = useRef({
+    isRequesting: false,
+    isFeeding: false,
+    refreshFlag: 1
+  })
+  const { current: refData } = ref
   const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
-  const feedKey = `feed:${cacheKey}`
   let defaultState = { ...initState }
   if (cacheData) {
     const { response, error } = cacheData
@@ -50,13 +55,13 @@ export const useApi = (
       response,
       error,
       options
-    }
+    } as ReactUseApi.Action
     debug && console.log('[ReactUseApi][Feed]', cacheKey)
-    defaultState = reducer(defaultState, action)
     if (!isSSR) {
-      cache.del(cacheKey)
-      cache.set(feedKey, true)
+      action.fromCache = true
+      refData.isFeeding = true
     }
+    defaultState = reducer(defaultState, action)
   } else if (isSSR) {
     if (!cacheKeys.has(cacheKey)) {
       cacheKeys.add(cacheKey)
@@ -68,48 +73,43 @@ export const useApi = (
     })
   }
   const [state, dispatch] = useReducer(reducer, defaultState)
-  const isRequesting = useRef<boolean>(false)
+
   const request = useCallback(
     async (cfg = config as ReactUseApi.Config, keepState = true) => {
       // update state's cachekey for saving the prevState when requesting (refreshing)
       if (keepState) {
         state.$cacheKey = cacheKey
       }
-      isRequesting.current = true
+      refData.isRequesting = true
       return fetchApi(context, cfg, options, dispatch)
     },
-    [context, cacheKey, options, dispatch, state]
-  )
-  const metrics = useMemo(
-    () => ({
-      refreshFlag: 1
-    }),
-    [cacheKey]
+    [context, cacheKey, options, dispatch, state, refData]
   )
   const { shouldRequest, watch } = options
   // for each re-rendering
   if (
-    !isRequesting.current &&
+    !refData.isRequesting &&
     isFunction(shouldRequest) &&
     shouldRequest() === true
   ) {
-    metrics.refreshFlag = Date.now()
+    refData.refreshFlag = Date.now()
   }
   const { loading, data } = state
-  if (!loading && isRequesting.current) {
-    isRequesting.current = false
+  if (!loading && refData.isRequesting) {
+    refData.isRequesting = false
   }
   useEffect(() => {
-    const isFeeding = cache.get(feedKey)
     // SSR will never invoke request() due to the following cases:
     // 1. There is a cacheData for the cacheKey
     // 2. Feeding the data come from the cache
     // For non-SSR, cacheData will be undefined if cacheKey has been changed
-    if (!isSSR && !cacheData && !isFeeding) {
+    if (!isSSR && !cacheData && !refData.isFeeding) {
       request()
     }
-    isFeeding && cache.del(feedKey)
-  }, [cacheKey, metrics.refreshFlag, ...(Array.isArray(watch) ? watch : [])])
+    if (refData.isFeeding) {
+      refData.isFeeding = false
+    }
+  }, [cacheKey, refData.refreshFlag, ...(Array.isArray(watch) ? watch : [])])
 
   return [data, state, request]
 }
@@ -130,11 +130,12 @@ export const reducer = (
         ...(cacheKey !== state.$cacheKey ? initState : state),
         loading: true,
         error: undefined,
+        fromCache: false,
         ...basicState
       }
     }
     case ACTIONS.REQUEST_END: {
-      const { response, error } = action
+      const { response, error, fromCache } = action
       const { prevState: pre, ...prevState } = state
       const { data: prevData } = prevState
       const { dependencies } = options
@@ -146,6 +147,7 @@ export const reducer = (
         response,
         dependencies,
         error,
+        fromCache: !!fromCache,
         ...basicState
       }
       newState.data = error ? undefined : getResponseData(options, newState)
