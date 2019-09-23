@@ -114,7 +114,7 @@ export const Main = () => {
   const loadMore = useCallback(() => {
     const nextOffset = offset + limit
     // fetch the data and keep the state and prevData
-    request(getAPiList(nextOffset, limit))
+    request(getAPiList(nextOffset, limit), true)
     setOffset(nextOffset)
   }, [offset])
 
@@ -179,7 +179,7 @@ const [data, state, request] = useApi(
 const [data, state, request] = useApi(config, options)
 
 // request the API data again
-request(config?: ReactUseApi.Config, keepState = true)
+request(config?: ReactUseApi.Config, keepState = false)
 ```
 
 ### Config
@@ -237,7 +237,7 @@ A function allows requesting API data again. This function will trigger re-rende
 | Name      | Type               | Default                         | Description                                                                                                                       |
 | --------- | ------------------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | config    | ReactUseApi.Config | The config passed from useApi() | An axios' config object to fetch API data.                                                                                        |
-| keepState | boolean            | true                            | Set to true to maintain current state data, which facilitates combining previous data with current data, such as table list data. |
+| keepState | boolean            | false                           | Set to true to maintain current state data, which facilitates combining previous data with current data, such as table list data. |
 
 ## TypeScript Support
 

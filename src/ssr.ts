@@ -31,6 +31,8 @@ export const feedRequests = async (
   // This approach may look like inefficient but rather stable, since each config may rely on the data from useApi().
   // However,  it is possible that no one request config that depends on another one, only one renderSSR() is needed
   // , but who can guarantee that every developer is able to consider this dependency?
+  // react-apollo uses the similar algorithm
+  // https://github.com/apollographql/react-apollo/blob/master/packages/ssr/src/getDataFromTree.ts
   const { config, cacheKey } = ssrConfigs[0] // fetch the first
   const cacheData = cache.get(cacheKey)
   if (!cacheData) {

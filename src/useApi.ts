@@ -75,8 +75,9 @@ export const useApi = (
   const [state, dispatch] = useReducer(reducer, defaultState)
 
   const request = useCallback(
-    async (cfg = config as ReactUseApi.Config, keepState = true) => {
+    async (cfg = config as ReactUseApi.Config, keepState = false) => {
       // update state's cachekey for saving the prevState when requesting (refreshing)
+      // it's good to set true for pagination
       if (keepState) {
         state.$cacheKey = cacheKey
       }
