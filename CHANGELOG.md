@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/RyanRoll/react-use-api/compare/v1.1.0...v2.0.0) (2019-09-23)
+
+
+### Features
+
+* **useApi:** Bug fix and trigger CI again ([634b612](https://github.com/RyanRoll/react-use-api/commit/634b612))
+
+
+### BREAKING CHANGES
+
+* **useApi:** revert keepState=false for request()
+
 # [1.1.0](https://github.com/RyanRoll/react-use-api/compare/v1.0.8...v1.1.0) (2019-09-22)
 
 
