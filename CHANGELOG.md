@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/RyanRoll/react-use-api/compare/v1.0.8...v1.1.0) (2019-09-22)
+
+
+### Features
+
+* **useApi:** add a new property `fromCache` for state data ([cacecf8](https://github.com/RyanRoll/react-use-api/commit/cacecf8))
+
 ## [1.0.8](https://github.com/RyanRoll/react-use-api/compare/v1.0.7...v1.0.8) (2019-08-21)
 
 
