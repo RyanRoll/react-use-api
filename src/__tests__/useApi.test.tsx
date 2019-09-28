@@ -160,8 +160,6 @@ describe('useApi tests', () => {
   it('should work well with cache data', async () => {
     console.log = jest.fn()
     const cache = new LRU<string, ReactUseApi.CacheData | any>()
-    const originalDel = cache.del
-    jest.spyOn(cache, 'del').mockImplementation(originalDel)
     const context = {
       settings: {
         cache,
@@ -539,6 +537,54 @@ describe('useApi tests', () => {
     })
     expect(ref.current.isRequesting).toBe(false)
     spy.mockRestore()
+  })
+
+  it('should shouldUseApiCache work well', async () => {
+    console.log = jest.fn()
+    const cache = new LRU<string, ReactUseApi.CacheData | any>()
+    const context = {
+      settings: {
+        cache,
+        debug: true,
+        isSSR: () => false,
+        shouldUseApiCache: (config, cacheKey) => {
+          if (cacheKey.includes('/no/cache')) {
+            return false
+          }
+          return true
+        }
+      }
+    } as ReactUseApi.CustomContext
+    const cacheKey = '{"url":"/api/v1/foo/bar"}'
+    cache.set(cacheKey, {
+      response: {
+        data: apiData
+      }
+    })
+    const noCacheData = {
+      no: 'dont touch me'
+    }
+    const noCacheApiUrl = '/api/v1/no/cache'
+    cache.set(`{"url":"${noCacheApiUrl}"}`, {
+      response: {
+        data: noCacheData
+      }
+    })
+    const wrapper = createWrapper(context)
+    const { result, rerender } = renderHook(
+      () => {
+        const [data1] = useApi(url)
+        const [data2] = useApi(noCacheApiUrl)
+        return [data1, data2]
+      },
+      { wrapper }
+    )
+    // cannot use waitForNextUpdate to test the non-rerender situation, use rerender instead
+    rerender()
+
+    const [data1, data2] = result.current
+    expect(data1).toEqual(apiData)
+    expect(data2).not.toEqual(noCacheData)
   })
 
   it('should watch work well', async () => {

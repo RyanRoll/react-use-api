@@ -56,10 +56,11 @@ describe('configure tests', () => {
         axios: axios.create(),
         cache: new LRU<string, ReactUseApi.CacheData>(),
         maxRequests: 100,
+        useCacheData: false,
+        deleteAfterLoading: false,
         renderSSR: () => '',
         isSSR: () => true,
-        useCacheData: false,
-        deleteAfterLoading: false
+        shouldUseApiCache: () => false
       },
       collection: {
         ssrConfigs: customSSRConfig,
@@ -172,6 +173,7 @@ describe('getResponseData tests', () => {
         headers: {}
       },
       loading: false,
+      fromCache: false,
       $cacheKey: 'foo/bar'
     }
     const returnedData = getResponseData(options, state)
@@ -219,6 +221,7 @@ describe('getResponseData tests', () => {
         }
       ],
       loading: false,
+      fromCache: false,
       $cacheKey: 'foo/bar'
     }
     const returnedData = getResponseData(options, state)

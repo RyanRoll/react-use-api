@@ -299,17 +299,18 @@ export const render = async (req, axios) => {
 
 _Each property is optional_
 
-| Name           | Type                                      | Default                             | Description                                                             |
-| -------------- | ----------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
-| cache          | LRU<String, ReactUseApi.CacheData \| any> | new LRU()                           | The cache instance based on lru-cache                                   |
-| axios          | AxiosStatic \| AxiosInstance              | axios                               | axios instance (http client)                                            |
-| maxRequests    | number                                    | 50                                  | The maximum of API requests when SSR                                    |
-| autoPurgeCache | boolean                                   | true                                | Cache data will be cleaned up after executing loadApiCache()            |
-| useCacheData   | boolean                                   | true                                | Set true to inject JS cache data into html when calling injectSSRHtml() |
-| renderSSR      | Function                                  | () => ''                            | A callback to render SSR string for injectSSRHtml()                     |
-| isSSR          | Function                                  | () => typeof window === 'undefined' | A function to determine if the current environment is server            |
-| debug          | boolean                                   | true                                | Set true to get debug message from console                              |
-| clientCacheVar | string                                    | 'USE_API_CACHE'                     | The JS variable name of cache data                                      |
+| Name              | Type                                      | Default                                                   | Description                                                                                                          |
+| ----------------- | ----------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| cache             | LRU<String, ReactUseApi.CacheData \| any> | new LRU()                                                 | The cache instance based on lru-cache                                                                                |
+| axios             | AxiosStatic \| AxiosInstance              | axios                                                     | axios instance (http client)                                                                                         |
+| maxRequests       | number                                    | 50                                                        | The maximum of API requests when SSR                                                                                 |
+| autoPurgeCache    | boolean                                   | true                                                      | Cache data will be cleaned up after executing `loadApiCache()`                                                       |
+| useCacheData      | boolean                                   | true                                                      | Set true to inject JS cache data into html when calling `injectSSRHtml()`                                            |
+| debug             | boolean                                   | true                                                      | Set true to get debug message from console                                                                           |
+| clientCacheVar    | string                                    | 'USE_API_CACHE'                                           | The JS variable name of cache data                                                                                   |
+| renderSSR         | Function                                  | () => ''                                                  | A callback to render SSR string for injectSSRHtml()                                                                  |
+| isSSR             | Function                                  | () => typeof window === 'undefined'                       | A function to determine if the current environment is server                                                         |
+| shouldUseApiCache | Function                                  | (config?: ReactUseApi.Config, cacheKey?: string): boolean | Returns true to enable useApi to get the API data from API cache, which is loaded by `loadApiCache`. Default is true |
 
 #### Arguments of injectSSRHtml
 

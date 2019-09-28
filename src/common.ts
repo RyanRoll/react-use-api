@@ -8,10 +8,14 @@ export const defaultSettings = {
   maxRequests: 50,
   autoPurgeCache: true,
   useCacheData: true,
-  renderSSR: (() => '') as (...args: any[]) => string,
-  isSSR: (() => typeof window === 'undefined') as (...args: any[]) => boolean,
   debug: false,
-  clientCacheVar: '__USE_API_CACHE__'
+  clientCacheVar: '__USE_API_CACHE__',
+  isSSR: (...args: any[]): boolean | void => typeof window === 'undefined',
+  renderSSR: (...args: any[]): string => '',
+  shouldUseApiCache: (
+    config?: ReactUseApi.Config,
+    cacheKey?: string
+  ): boolean | void => true
 }
 export const ACTIONS = {
   REQUEST_START: 'REQUEST_START',

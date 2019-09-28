@@ -31,7 +31,7 @@ export const useApi = (
   invariant(verifyConfig(config), `API config "${rawConfig}" is invalid.`)
   const context = useContext(ApiContext)
   const {
-    settings: { cache, debug },
+    settings: { cache, debug, shouldUseApiCache },
     isSSR,
     collection: { ssrConfigs, cacheKeys }
   } = context
@@ -48,7 +48,7 @@ export const useApi = (
   const { current: refData } = ref
   const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
   let defaultState = { ...initState }
-  if (cacheData) {
+  if (cacheData && (isSSR || !!shouldUseApiCache(config, cacheKey))) {
     const { response, error } = cacheData
     const action = {
       type: ACTIONS.REQUEST_END,
