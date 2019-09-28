@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/RyanRoll/react-use-api/compare/v2.0.0...v2.1.0) (2019-09-28)
+
+
+### Features
+
+* **useApi:** add shouldUseApiCache to enable/disable the particular requests ([8ee5e0e](https://github.com/RyanRoll/react-use-api/commit/8ee5e0e))
+
 # [2.0.0](https://github.com/RyanRoll/react-use-api/compare/v1.1.0...v2.0.0) (2019-09-23)
 
 
