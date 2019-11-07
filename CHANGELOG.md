@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/RyanRoll/react-use-api/compare/v2.1.0...v2.1.1) (2019-11-07)
+
+
+### Bug Fixes
+
+* **injectSSRHtml:** rule the uncached data out by shouldUseApiCache() ([6702a6c](https://github.com/RyanRoll/react-use-api/commit/6702a6c))
+
 # [2.1.0](https://github.com/RyanRoll/react-use-api/compare/v2.0.0...v2.1.0) (2019-09-28)
 
 
