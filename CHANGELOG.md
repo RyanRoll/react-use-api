@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/RyanRoll/react-use-api/compare/v2.1.1...v2.1.2) (2019-11-07)
+
+
+### Bug Fixes
+
+* **injectSSRHtml:** bug fix where the arguments of shouldUseApiCache were wrong ([d7d6d13](https://github.com/RyanRoll/react-use-api/commit/d7d6d13))
+
 ## [2.1.1](https://github.com/RyanRoll/react-use-api/compare/v2.1.0...v2.1.1) (2019-11-07)
 
 
