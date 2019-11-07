@@ -67,13 +67,18 @@ export const injectSSRHtml = async (
   context = configure(context, true)
   const { settings } = context
   settings.renderSSR = renderSSR || settings.renderSSR
-  const { cache, useCacheData, clientCacheVar } = settings
+  const { cache, useCacheData, clientCacheVar, shouldUseApiCache } = settings
   cache.reset()
   // collect API requests first
   let ssrHtml = settings.renderSSR()
   ssrHtml = await exports.feedRequests(context, ssrHtml)
   if (useCacheData) {
-    const cacheJson = cache.dump()
+    const cacheJson = cache.dump().filter(({ k }) => {
+      const config = {
+        url: k
+      }
+      return shouldUseApiCache(config, k) !== false
+    })
     const axiosHooksScript = `<script>window.${clientCacheVar} = ${JSON.stringify(
       cacheJson
     ).replace(/</g, '\\u003c')}</script>`

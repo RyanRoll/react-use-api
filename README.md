@@ -8,12 +8,11 @@
   </h1>
 </div>
 
-[![npm](https://img.shields.io/npm/v/react-use-api?label=version&color=43A047)](https://www.npmjs.com/package/react-use-api)
-[![Build Status](https://travis-ci.org/RyanRoll/react-use-api.svg?branch=master)](https://travis-ci.org/RyanRoll/react-use-api)
-[![Coverage Status](https://coveralls.io/repos/github/RyanRoll/react-use-api/badge.svg?branch=master)](https://coveralls.io/github/RyanRoll/react-use-api?branch=master)
-![GitHub package.json dependency version (dev dep on branch)](https://img.shields.io/github/package-json/dependency-version/RyanRoll/react-use-api/dev/react?color=EF5350)
-![npm type definitions](https://img.shields.io/npm/types/react-use-api?color=0277BD)
-![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api?color=5C6BC0)
+[![npm](https://img.shields.io/npm/v/react-use-api?style=for-the-badge&label=version&color=e56565)](https://www.npmjs.com/package/react-use-api)
+[![Build Status](https://img.shields.io/travis/ryanroll/react-use-api/master?style=for-the-badge)](https://travis-ci.org/RyanRoll/react-use-api)
+[![Coverage Status](https://img.shields.io/coveralls/github/RyanRoll/react-use-api/master?style=for-the-badge)](https://coveralls.io/github/RyanRoll/react-use-api?branch=master)
+![npm type definitions](https://img.shields.io/npm/types/react-use-api?style=for-the-badge&color=0277BD)
+![GitHub](https://img.shields.io/github/license/RyanRoll/react-use-api?style=for-the-badge&color=5C6BC0)
 
 [Axios](https://github.com/axios/axios)-based React hooks for async HTTP request data. `react-use-api` feeds API data to React components when SSR (Server-Side Rendering), and caches the data to Front-End. This is designed for diverse UI states and also a good solution if your app is based on [create-react-app](https://create-react-app.dev).
 

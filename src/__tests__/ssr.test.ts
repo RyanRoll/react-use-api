@@ -218,6 +218,13 @@ describe('injectSSRHtml tests', () => {
     .spyOn(ssrModule, 'feedRequests')
     .mockResolvedValue(html)
 
+  const apiTestCache = new LRU<string, ReactUseApi.CacheData | any>()
+  apiTestCache.set('foo', 'bar')
+  const apiTestCacheJson = JSON.stringify(apiTestCache.dump()).replace(
+    /</g,
+    '\\u003c'
+  )
+
   it('should injectSSRHtml work  well with settings.renderSSR', async () => {
     const renderSSR = jest.fn().mockReturnValue(html)
     const context = configure({
@@ -229,7 +236,7 @@ describe('injectSSRHtml tests', () => {
     const { settings, isSSR } = context
     const { cache } = settings
     cache.reset = jest.fn()
-    cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
+    cache.set('foo', 'bar')
     expect.hasAssertions()
     const ssrHtml = await injectSSRHtml(context)
     expect(isSSR).toBe(true)
@@ -237,7 +244,7 @@ describe('injectSSRHtml tests', () => {
     expect(cache.reset).toHaveBeenCalled()
     expect(feedRequests).toHaveBeenLastCalledWith(context, html)
     expect(ssrHtml).toEqual(
-      `${html}<script>window.__USE_API_CACHE__ = {"foo":"bar"}</script>`
+      `${html}<script>window.__USE_API_CACHE__ = ${apiTestCacheJson}</script>`
     )
   })
 
@@ -253,13 +260,43 @@ describe('injectSSRHtml tests', () => {
     const { settings } = context
     const { cache } = settings
     cache.reset = jest.fn()
-    cache.dump = jest.fn().mockReturnValue({ foo: 'bar' })
+    cache.dump = jest.fn()
     expect.hasAssertions()
     const ssrHtml = await injectSSRHtml(context)
     expect(renderSSR).toHaveBeenCalled()
     expect(cache.reset).toHaveBeenCalled()
     expect(feedRequests).toHaveBeenLastCalledWith(context, html)
     expect(ssrHtml).toEqual(html)
+  })
+
+  it('should rule the uncached data out by shouldUseApiCache()', async () => {
+    const renderSSR = jest.fn().mockReturnValue(html)
+    const context = configure({
+      settings: {
+        ...copySettings(),
+        renderSSR,
+        shouldUseApiCache(config: ReactUseApi.SingleConfig, cacheKey) {
+          if (
+            cacheKey.includes('/no/cache') ||
+            config.url.includes('/nodata')
+          ) {
+            return false
+          }
+        }
+      }
+    })
+    const { settings } = context
+    const { cache } = settings
+    cache.reset = jest.fn()
+    cache.set('/no/cache', 'no cache')
+    cache.set('/nodata', 'no data')
+    cache.set('foo', 'bar')
+    expect.hasAssertions()
+    const ssrHtml = await injectSSRHtml(context)
+    expect(renderSSR).toHaveBeenCalled()
+    expect(ssrHtml).toEqual(
+      `${html}<script>window.__USE_API_CACHE__ = ${apiTestCacheJson}</script>`
+    )
   })
 })
 
