@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - lts/*
   - 11
-  - 12
+  - 13
 
 jobs:
   include:

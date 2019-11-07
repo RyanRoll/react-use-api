@@ -219,7 +219,7 @@ describe('injectSSRHtml tests', () => {
     .mockResolvedValue(html)
 
   const apiTestCache = new LRU<string, ReactUseApi.CacheData | any>()
-  apiTestCache.set('foo', 'bar')
+  apiTestCache.set(JSON.stringify({ url: 'foo' }), 'bar')
   const apiTestCacheJson = JSON.stringify(apiTestCache.dump()).replace(
     /</g,
     '\\u003c'
@@ -236,7 +236,7 @@ describe('injectSSRHtml tests', () => {
     const { settings, isSSR } = context
     const { cache } = settings
     cache.reset = jest.fn()
-    cache.set('foo', 'bar')
+    cache.set(JSON.stringify({ url: 'foo' }), 'bar')
     expect.hasAssertions()
     const ssrHtml = await injectSSRHtml(context)
     expect(isSSR).toBe(true)
@@ -288,9 +288,9 @@ describe('injectSSRHtml tests', () => {
     const { settings } = context
     const { cache } = settings
     cache.reset = jest.fn()
-    cache.set('/no/cache', 'no cache')
-    cache.set('/nodata', 'no data')
-    cache.set('foo', 'bar')
+    cache.set(JSON.stringify({ url: '/no/cache' }), 'no cache')
+    cache.set(JSON.stringify({ url: '/nodata' }), 'no data')
+    cache.set(JSON.stringify({ url: 'foo' }), 'bar')
     expect.hasAssertions()
     const ssrHtml = await injectSSRHtml(context)
     expect(renderSSR).toHaveBeenCalled()

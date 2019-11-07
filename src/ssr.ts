@@ -73,11 +73,14 @@ export const injectSSRHtml = async (
   let ssrHtml = settings.renderSSR()
   ssrHtml = await exports.feedRequests(context, ssrHtml)
   if (useCacheData) {
-    const cacheJson = cache.dump().filter(({ k }) => {
-      const config = {
-        url: k
+    const cacheJson = cache.dump().filter(({ k: cacheKey }) => {
+      let config: ReactUseApi.Config
+      try {
+        config = JSON.parse(cacheKey)
+      } catch (e) {
+        config = {}
       }
-      return shouldUseApiCache(config, k) !== false
+      return shouldUseApiCache(config, cacheKey) !== false
     })
     const axiosHooksScript = `<script>window.${clientCacheVar} = ${JSON.stringify(
       cacheJson
