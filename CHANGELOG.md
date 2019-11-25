@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/RyanRoll/react-use-api/compare/v2.1.2...v2.2.0) (2019-11-25)
+
+
+### Features
+
+* **#7:** add an argument postProcess for injectSSRHtml ([48f78b4](https://github.com/RyanRoll/react-use-api/commit/48f78b4)), closes [#7](https://github.com/RyanRoll/react-use-api/issues/7)
+
 ## [2.1.2](https://github.com/RyanRoll/react-use-api/compare/v2.1.1...v2.1.2) (2019-11-07)
 
 
