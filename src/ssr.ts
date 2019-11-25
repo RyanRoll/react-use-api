@@ -1,4 +1,4 @@
-import { configure, axiosAll, defaultSettings } from './common'
+import { configure, axiosAll, defaultSettings, isFunction } from './common'
 
 export const feedRequests = async (
   context: ReactUseApi.Context,
@@ -62,7 +62,8 @@ export const feedRequests = async (
 
 export const injectSSRHtml = async (
   context: ReactUseApi.CustomContext,
-  renderSSR?: ReactUseApi.Settings['renderSSR']
+  renderSSR?: ReactUseApi.Settings['renderSSR'],
+  postProcess?: (ssrHtml: string, apiCacheScript: string) => string
 ) => {
   context = configure(context, true)
   const { settings } = context
@@ -82,10 +83,15 @@ export const injectSSRHtml = async (
       }
       return shouldUseApiCache(config, cacheKey) !== false
     })
-    const axiosHooksScript = `<script>window.${clientCacheVar} = ${JSON.stringify(
-      cacheJson
-    ).replace(/</g, '\\u003c')}</script>`
-    return ssrHtml + axiosHooksScript
+    const apiCacheScript = Object.keys(cacheJson)
+      ? `<script>window.${clientCacheVar} = ${JSON.stringify(cacheJson).replace(
+          /</g,
+          '\\u003c'
+        )}</script>`
+      : ''
+    return isFunction(postProcess)
+      ? postProcess(ssrHtml, apiCacheScript)
+      : ssrHtml + apiCacheScript
   }
   return ssrHtml
 }

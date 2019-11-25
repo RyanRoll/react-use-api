@@ -12,6 +12,8 @@ export const defaultSettings = {
   clientCacheVar: '__USE_API_CACHE__',
   isSSR: (...args: any[]): boolean | void => typeof window === 'undefined',
   renderSSR: (...args: any[]): string => '',
+  // skip: (config?: ReactUseApi.Config, cacheKey?: string): boolean | void =>
+  //   false,
   shouldUseApiCache: (
     config?: ReactUseApi.Config,
     cacheKey?: string

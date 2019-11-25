@@ -199,9 +199,7 @@ export const handleUseApiOptions = (
     ? ({ ...opt } as ReactUseApi.Options)
     : ({
         watch: Array.isArray(opt) ? opt : [],
-        handleData: isFunction(opt) ? opt : undefined,
-        shouldRequest: undefined,
-        dependencies: undefined
+        handleData: isFunction(opt) ? opt : undefined
       } as ReactUseApi.Options)
   options.$cacheKey = cacheKey
   return options

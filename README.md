@@ -195,12 +195,12 @@ const [data, state] = useApi({
 
 ### Options [Optional]
 
-| Name          | Type                                          | default | Description                                                                                                                                                                                                   |
-| ------------- | --------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response. **IMPORTANT** Using any state setter in handleData is dangerous, which will cause the component re-rendering infinitely while SSR rendering. |
-| dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                              |
-| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when re-rendering. Returning true will trigger useApi to re-fetch. This option is helpful if you want to re-request an API when a route change occurs. |
-| watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                          |
+| Name          | Type                                          | default | Description                                                                                                                                                                                                          |
+| ------------- | --------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| handleData    | Function(data: any, state: ReactUseApi.State) |         | A callback function to deal with the data of the API's response. **IMPORTANT** Using any state setter in handleData is dangerous, which will cause the component re-rendering infinitely while SSR rendering.        |
+| dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                                     |
+| shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when `only re-rendering`. Returning true will trigger useApi to re-fetch. This option is helpful if you want to re-request an API when a route change occurs. |
+| watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                                 |
 
 ## State
 
@@ -316,7 +316,8 @@ _Each property is optional_
 ```ts
 injectSSRHtml(
   context: ReactUseApi.CustomContext,
-  renderSSR?: () => string
+  renderSSR?: () => string,
+  postProcess?: (ssrHtml: string, apiCacheScript: string) => string,
 ): string
 
 ```

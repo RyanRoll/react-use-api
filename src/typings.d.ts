@@ -39,9 +39,10 @@ declare namespace ReactUseApi {
   }
   interface Options {
     watch?: any[]
+    dependencies?: dependencies
     handleData?: (data: Data, newState: State) => any
     shouldRequest?: () => boolean | void
-    dependencies?: dependencies
+    // skip?: (config?: ReactUseApi.Config, cacheKey?: string) => boolean | void
     $cacheKey?: string
   }
   interface dependencies {

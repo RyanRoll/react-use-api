@@ -269,6 +269,34 @@ describe('injectSSRHtml tests', () => {
     expect(ssrHtml).toEqual(html)
   })
 
+  it('should injectSSRHtml work well with postProcess', async () => {
+    const renderSSR = jest.fn().mockReturnValue(html)
+    const context = configure({
+      settings: {
+        ...copySettings()
+      }
+    })
+    const { settings } = context
+    const { cache } = settings
+    cache.reset = jest.fn()
+    cache.set(JSON.stringify({ url: 'foo' }), 'bar')
+    expect.hasAssertions()
+    let originSSRHtml = ''
+    const postProcess = jest.fn((ssrHtml: string, apiCacheScript: string) => {
+      originSSRHtml = ssrHtml + apiCacheScript
+      return '404'
+    })
+    const ssrHtml = await injectSSRHtml(context, renderSSR, postProcess)
+    expect(renderSSR).toHaveBeenCalled()
+    expect(cache.reset).toHaveBeenCalled()
+    expect(postProcess).toHaveBeenCalled()
+    expect(feedRequests).toHaveBeenLastCalledWith(context, html)
+    expect(originSSRHtml).toEqual(
+      `${html}<script>window.__USE_API_CACHE__ = ${apiTestCacheJson}</script>`
+    )
+    expect(ssrHtml).toEqual('404')
+  })
+
   it('should rule the uncached data out by shouldUseApiCache()', async () => {
     const renderSSR = jest.fn().mockReturnValue(html)
     const context = configure({
