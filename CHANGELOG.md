@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/RyanRoll/react-use-api/compare/v2.3.0...v2.3.1) (2020-06-29)
+
+
+### Bug Fixes
+
+* **hotfix:** make ssr work ([713a103](https://github.com/RyanRoll/react-use-api/commit/713a10375c6da9d9508e08e70e59b7f087c8509a))
+
 # [2.3.0](https://github.com/RyanRoll/react-use-api/compare/v2.2.0...v2.3.0) (2020-06-29)
 
 
