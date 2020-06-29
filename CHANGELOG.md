@@ -1,3 +1,10 @@
+# [2.3.0](https://github.com/RyanRoll/react-use-api/compare/v2.2.0...v2.3.0) (2020-06-29)
+
+
+### Features
+
+* **options:** add a new option "skip" to avoid calling API ([8f25d60](https://github.com/RyanRoll/react-use-api/commit/8f25d6008f800c562e9239b84538f7698d80538d))
+
 # [2.2.0](https://github.com/RyanRoll/react-use-api/compare/v2.1.2...v2.2.0) (2019-11-25)
 
 
