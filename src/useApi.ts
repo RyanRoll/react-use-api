@@ -85,11 +85,11 @@ export const useApi = (
       if (!cacheKeys.has(cacheKey)) {
         cacheKeys.add(cacheKey)
         debug && console.log('[ReactUseApi][Collect]', cacheKey)
-        ssrConfigs.push({
-          config,
-          cacheKey,
-        })
       }
+      ssrConfigs.push({
+        config,
+        cacheKey,
+      })
     }
   }
 
