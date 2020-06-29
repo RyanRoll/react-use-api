@@ -69,7 +69,7 @@ import useApi from 'react-use-api'
 
 export const Main = () => {
   const [data, { loading, error }, request] = useApi({
-    url: '/api/foo/bar'
+    url: '/api/foo/bar',
   })
 
   return (
@@ -100,8 +100,8 @@ export const Main = () => {
     () => ({
       handleData,
       dependencies: {
-        limit
-      }
+        limit,
+      },
     }),
     [limit]
   )
@@ -137,17 +137,17 @@ export const getAPiList = (offset, limit) => ({
   url: '/api/list',
   params: {
     offset,
-    limit
-  }
+    limit,
+  },
 })
 
 // [IMPORTANT] Using any state setter in handleData is not allowed,
 // it will cause the component re-rendering infinitely while SSR rendering.
-export const handleData = state => {
+export const handleData = (state) => {
   const { prevData = [], response, dependencies, error } = state
   if (!error) {
     const {
-      data: { userList }
+      data: { userList },
     } = response
     const { limit } = dependencies
     if (userList.length < limit) {
@@ -189,7 +189,7 @@ The config can be an [Axios Request Config](https://github.com/axios/axios#reque
 const [data, state] = useApi('/api/foo/bar')
 // equals to
 const [data, state] = useApi({
-  url: '/api/foo/bar'
+  url: '/api/foo/bar',
 })
 ```
 
@@ -201,6 +201,7 @@ const [data, state] = useApi({
 | dependencies  | Object                                        |         | The additional needed data using in handleData. `NOTE`: "dependencies" is supposed to immutable due to React's rendering policy.                                                                                     |
 | shouldRequest | Function                                      |         | A callback to decide whether useApi re-fetches the API when `only re-rendering`. Returning true will trigger useApi to re-fetch. This option is helpful if you want to re-request an API when a route change occurs. |
 | watch         | any[]                                         | []      | An array of values that the effect depends on, this is the same as the second argument of useEffect.                                                                                                                 |
+| skip          | Boolean                                       | false   | Sets true to skip API call.                                                                                                                                                                                          |
 
 ## State
 
@@ -267,8 +268,8 @@ export const render = async (req, axios) => {
   const apiContext = {
     settings: {
       axios, // your custom axios instance
-      isSSR: () => true // we are 100% sure here is SSR mode
-    }
+      isSSR: () => true, // we are 100% sure here is SSR mode
+    },
   }
   const routerContext = {}
   const renderSSR = () =>

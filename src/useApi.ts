@@ -1,12 +1,13 @@
 import {
   useEffect,
+  useLayoutEffect,
   useReducer,
   useMemo,
   useContext,
   useCallback,
-  useRef
+  useRef,
 } from 'react'
-import invariant from 'invariant'
+// import invariant from 'invariant'
 
 import { ApiContext } from './context'
 import {
@@ -15,67 +16,99 @@ import {
   axiosAll,
   getResponseData,
   isObject,
-  isFunction
+  isFunction,
 } from './common'
 
 export const useApi = (
   config: ReactUseApi.Config | string,
   opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
 ) => {
-  const rawConfig = config
   if (typeof config === 'string') {
     config = {
-      url: config
+      url: config,
     }
   }
-  invariant(verifyConfig(config), `API config "${rawConfig}" is invalid.`)
+
   const context = useContext(ApiContext)
   const {
     settings: { cache, debug, shouldUseApiCache },
     isSSR,
-    collection: { ssrConfigs, cacheKeys }
+    collection: { ssrConfigs, cacheKeys },
   } = context
   const cacheKey = JSON.stringify(config)
+  const ref = useRef(
+    useMemo(
+      () =>
+        ({
+          id: Date.now(),
+          isRequesting: false,
+          isFeeding: false,
+          isInitialized: false,
+          refreshFlag: 1,
+          cacheKey,
+          config,
+        } as ReactUseApi.RefData),
+      []
+    )
+  )
   const options = useMemo(() => handleUseApiOptions(opt, cacheKey), [
     opt,
-    cacheKey
+    cacheKey,
   ])
-  const ref = useRef({
-    isRequesting: false,
-    isFeeding: false,
-    refreshFlag: 1
-  })
   const { current: refData } = ref
-  const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
-  let defaultState = { ...initState }
-  if (cacheData && (isSSR || !!shouldUseApiCache(config, cacheKey))) {
-    const { response, error } = cacheData
-    const action = {
-      type: ACTIONS.REQUEST_END,
-      response,
-      error,
-      options
-    } as ReactUseApi.Action
-    debug && console.log('[ReactUseApi][Feed]', cacheKey)
-    if (!isSSR) {
-      action.fromCache = true
-      refData.isFeeding = true
-    }
-    defaultState = reducer(defaultState, action)
-  } else if (isSSR) {
-    if (!cacheKeys.has(cacheKey)) {
-      cacheKeys.add(cacheKey)
-      debug && console.log('[ReactUseApi][Collect]', cacheKey)
-    }
-    ssrConfigs.push({
-      config,
-      cacheKey
-    })
+  const isValidConfig = verifyConfig(config)
+  const hasChangedConfig = refData.cacheKey !== cacheKey
+  if (hasChangedConfig) {
+    refData.cacheKey = cacheKey
+    refData.config = config
   }
+  // SSR processing
+  const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
+  const { skip } = options
+  let defaultState = { ...initState }
+  if (!skip) {
+    if (cacheData && (isSSR || !!shouldUseApiCache(config, cacheKey))) {
+      const { response, error } = cacheData
+      const action = {
+        type: ACTIONS.REQUEST_END,
+        response,
+        error,
+        options,
+      } as ReactUseApi.Action
+      debug && console.log('[ReactUseApi][Feed]', cacheKey)
+      if (!isSSR) {
+        action.fromCache = true
+        refData.isFeeding = true
+      }
+      defaultState = reducer(defaultState, action)
+    } else if (isSSR) {
+      if (!cacheKeys.has(cacheKey)) {
+        cacheKeys.add(cacheKey)
+        debug && console.log('[ReactUseApi][Collect]', cacheKey)
+        ssrConfigs.push({
+          config,
+          cacheKey,
+        })
+      }
+    }
+  }
+
   const [state, dispatch] = useReducer(reducer, defaultState)
+  const { shouldRequest, watch } = options
+  const { loading, data } = state
 
   const request = useCallback(
-    async (cfg = config as ReactUseApi.Config, keepState = false) => {
+    async (cfg = refData.config as ReactUseApi.Config, keepState = false) => {
+      if (options.skip) {
+        return null
+      }
+      // foolproof
+      if (
+        (cfg as React.MouseEvent)?.target &&
+        (cfg as React.MouseEvent)?.isDefaultPrevented
+      ) {
+        cfg = refData.config
+      }
       // update state's cachekey for saving the prevState when requesting (refreshing)
       // it's good to set true for pagination
       if (keepState) {
@@ -86,20 +119,45 @@ export const useApi = (
     },
     [context, cacheKey, options, dispatch, state, refData]
   )
-  const { shouldRequest, watch } = options
+
+  const shouldFetchApi = useCallback(
+    (forRerender = false) => {
+      let shouldRequestResult: boolean
+      if (isFunction(shouldRequest)) {
+        shouldRequestResult = !!shouldRequest() as boolean
+      }
+      return (
+        !skip &&
+        !refData.isRequesting &&
+        (forRerender
+          ? shouldRequestResult === true
+          : shouldRequestResult !== false) // false means skip
+      )
+    },
+    [skip, refData, shouldRequest]
+  )
+
   // for each re-rendering
-  if (
-    !refData.isRequesting &&
-    isFunction(shouldRequest) &&
-    shouldRequest() === true
-  ) {
+  if (shouldFetchApi(true)) {
     refData.refreshFlag = Date.now()
   }
-  const { loading, data } = state
   if (!loading && refData.isRequesting) {
     refData.isRequesting = false
   }
-  useEffect(() => {
+
+  const useIsomorphicLayoutEffect = isSSR ? useEffect : useLayoutEffect
+  const effect: typeof useIsomorphicLayoutEffect = useCallback(
+    (callback, ...args) => {
+      const wrapper = () => {
+        if (isValidConfig) {
+          return callback()
+        }
+      }
+      return useIsomorphicLayoutEffect(wrapper, ...args)
+    },
+    [isValidConfig]
+  )
+  effect(() => {
     // SSR will never invoke request() due to the following cases:
     // 1. There is a cacheData for the cacheKey
     // 2. Feeding the data come from the cache
@@ -112,6 +170,9 @@ export const useApi = (
     }
   }, [cacheKey, refData.refreshFlag, ...(Array.isArray(watch) ? watch : [])])
 
+  if (!isValidConfig) {
+    return [undefined, undefined, undefined]
+  }
   return [data, state, request]
 }
 
@@ -122,7 +183,7 @@ export const reducer = (
   const { type, options } = action
   const cacheKey = options.$cacheKey
   const basicState = {
-    $cacheKey: cacheKey
+    $cacheKey: cacheKey,
   }
   switch (type) {
     case ACTIONS.REQUEST_START: {
@@ -132,7 +193,7 @@ export const reducer = (
         loading: true,
         error: undefined,
         fromCache: false,
-        ...basicState
+        ...basicState,
       }
     }
     case ACTIONS.REQUEST_END: {
@@ -149,7 +210,7 @@ export const reducer = (
         dependencies,
         error,
         fromCache: !!fromCache,
-        ...basicState
+        ...basicState,
       }
       newState.data = error ? undefined : getResponseData(options, newState)
       return newState
@@ -166,7 +227,7 @@ export const fetchApi = async (
   dispatch: React.Dispatch<ReactUseApi.Action>
 ) => {
   const {
-    settings: { cache }
+    settings: { cache },
   } = context
   const cacheKey = options.$cacheKey
   try {
@@ -183,7 +244,7 @@ export const fetchApi = async (
     dispatch({
       type: ACTIONS.REQUEST_END,
       error,
-      options
+      options,
     })
   }
 }
@@ -199,7 +260,7 @@ export const handleUseApiOptions = (
     ? ({ ...opt } as ReactUseApi.Options)
     : ({
         watch: Array.isArray(opt) ? opt : [],
-        handleData: isFunction(opt) ? opt : undefined
+        handleData: isFunction(opt) ? opt : undefined,
       } as ReactUseApi.Options)
   options.$cacheKey = cacheKey
   return options
@@ -209,7 +270,7 @@ export const verifyConfig = (config: ReactUseApi.Config) => {
   return isObject(config)
     ? !!(config as ReactUseApi.SingleConfig).url
     : Array.isArray(config)
-    ? config.every(each => !!each.url)
+    ? config.every((each) => !!each.url)
     : false
 }
 
