@@ -14,7 +14,12 @@ declare namespace ReactUseApi {
   type MultiConfigs = SingleConfig[]
   type Config = SingleConfig | MultiConfigs
   type ApiResponse = Axios.AxiosResponse<JsonObject>
-  type Data = JsonObject | JsonObject[] | undefined | any
+  type SingleData = JsonObject | undefined | any
+  type Data = SingleData | SingleData[] | undefined | any
+  type RequestFn = (
+    cfg?: ReactUseApi.Config,
+    keepState?: boolean
+  ) => Promise<any>
 
   interface Context {
     settings?: Settings

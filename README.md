@@ -166,8 +166,8 @@ export const handleData = (state) => {
 #### Types
 
 ```ts
-const [data, state, request] = useApi(
-  config: ReactUseApi.Config | string,
+const [data, state, request] = useApi<D = ReactUseApi.Data>(
+  config: string | ReactUseApi.SingleConfig | ReactUseApi.MultiConfigs,
   opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
 )
 ```
@@ -179,6 +179,16 @@ const [data, state, request] = useApi(config, options)
 
 // request the API data again
 request(config?: ReactUseApi.Config, keepState = false)
+```
+
+With a custom TypeScript data type
+
+```tsx
+interface IMyData {
+  foo: string
+  bar: string
+}
+const [data, state, request] = useApi<IMyData>(config, options)
 ```
 
 ### Config
