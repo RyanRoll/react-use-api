@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/RyanRoll/react-use-api/compare/v2.3.1...v2.4.0) (2020-08-06)
+
+
+### Features
+
+* **TypeScript:** Custom data type support ([#17](https://github.com/RyanRoll/react-use-api/issues/17)) ([366a7de](https://github.com/RyanRoll/react-use-api/commit/366a7de95c94b1d46d46fda61d0caba0e06ccc0e))
+
 ## [2.3.1](https://github.com/RyanRoll/react-use-api/compare/v2.3.0...v2.3.1) (2020-06-29)
 
 
