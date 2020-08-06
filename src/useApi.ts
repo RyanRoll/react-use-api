@@ -19,16 +19,23 @@ import {
   isFunction,
 } from './common'
 
-export const useApi = (
+export function useApi<D = ReactUseApi.SingleData>(
+  config: ReactUseApi.SingleConfig | string,
+  opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
+): [D, ReactUseApi.State, ReactUseApi.RequestFn]
+export function useApi<D = ReactUseApi.SingleData[]>(
+  config: ReactUseApi.MultiConfigs,
+  opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
+): [D, ReactUseApi.State, ReactUseApi.RequestFn]
+export function useApi<D = ReactUseApi.Data>(
   config: ReactUseApi.Config | string,
   opt?: ReactUseApi.Options | ReactUseApi.Options['handleData']
-) => {
+): [D, ReactUseApi.State, ReactUseApi.RequestFn] {
   if (typeof config === 'string') {
     config = {
       url: config,
     }
   }
-
   const context = useContext(ApiContext)
   const {
     settings: { cache, debug, shouldUseApiCache },
