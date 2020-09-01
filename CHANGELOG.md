@@ -1,3 +1,10 @@
+## [2.4.1](https://github.com/RyanRoll/react-use-api/compare/v2.4.0...v2.4.1) (2020-09-01)
+
+
+### Bug Fixes
+
+* **pre-release:** add new option - useCache ([75e9222](https://github.com/RyanRoll/react-use-api/commit/75e92221e7e51c1b59dcd547f18a05a57db7a260))
+
 # [2.4.0](https://github.com/RyanRoll/react-use-api/compare/v2.3.1...v2.4.0) (2020-08-06)
 
 
