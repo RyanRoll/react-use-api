@@ -274,8 +274,8 @@ import App from '../../src/App'
 
 export const render = async (req, axios) => {
   const { url } = req
-  // configure SSR settings
   const apiContext = {
+    // configure your global options or SSR settings
     settings: {
       axios, // your custom axios instance
       isSSR: () => true, // we are 100% sure here is SSR mode
@@ -314,7 +314,6 @@ _Each property is optional_
 | cache             | LRU<String, ReactUseApi.CacheData \| any> | new LRU()                                                 | The cache instance based on lru-cache                                                                                |
 | axios             | AxiosStatic \| AxiosInstance              | axios                                                     | axios instance (http client)                                                                                         |
 | maxRequests       | number                                    | 50                                                        | The maximum of API requests when SSR                                                                                 |
-| autoPurgeCache    | boolean                                   | true                                                      | Cache data will be cleaned up after executing `loadApiCache()`                                                       |
 | useCacheData      | boolean                                   | true                                                      | Set true to inject JS cache data into html when calling `injectSSRHtml()`                                            |
 | debug             | boolean                                   | true                                                      | Set true to get debug message from console                                                                           |
 | clientCacheVar    | string                                    | 'USE_API_CACHE'                                           | The JS variable name of cache data                                                                                   |

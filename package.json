@@ -35,7 +35,6 @@
     "yarn-package"
   ],
   "dependencies": {
-    "invariant": "^2.2.4",
     "lru-cache": "^5.1.1"
   },
   "peerDependencies": {

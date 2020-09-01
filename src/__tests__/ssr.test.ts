@@ -8,7 +8,7 @@ jest.mock('../common', () => {
   const common = jest.requireActual('../common')
   return {
     ...common,
-    axiosAll: jest.fn()
+    axiosAll: jest.fn(),
   }
 })
 
@@ -26,7 +26,7 @@ afterEach(() => {
 const copySettings = () => ({
   ...defaultSettings,
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
-  isSSR: () => true
+  isSSR: () => true,
 })
 const testCache = new LRU<string, ReactUseApi.CacheData | any>()
 testCache.set('foo', 'bar')
@@ -41,19 +41,19 @@ describe('feedRequests tests', () => {
     const ssrConfigs = [
       {
         config: {
-          url: '/api/v1/api1'
+          url: '/api/v1/api1',
         },
-        cacheKey: 'foo'
-      }
+        cacheKey: 'foo',
+      },
     ]
     const renderSSR = jest.fn(() => {
       if (count-- > 0) {
         // for the second time
         ssrConfigs.push({
           config: {
-            url: '/api/v1/api2'
+            url: '/api/v1/api2',
           },
-          cacheKey: 'abc'
+          cacheKey: 'abc',
         })
       }
       return '<div>Hello World!</div>'
@@ -62,18 +62,18 @@ describe('feedRequests tests', () => {
       settings: {
         ...copySettings(),
         renderSSR,
-        debug: false
-      }
+        debug: false,
+      },
     })
     const {
       settings: { cache },
-      collection
+      collection,
     } = context
     collection.ssrConfigs = ssrConfigs
     const response = {
       data: {
-        message: 'ok'
-      }
+        message: 'ok',
+      },
     }
     axiosAll.mockReset().mockResolvedValue(response)
     const ssrHtml = await feedRequests(context, '')
@@ -83,7 +83,7 @@ describe('feedRequests tests', () => {
     expect(ssrHtml).toBe('<div>Hello World!</div>')
     expect(cache.dump()).toEqual([
       { k: 'abc', v: { response }, e: 0 },
-      { k: 'foo', v: { response }, e: 0 }
+      { k: 'foo', v: { response }, e: 0 },
     ])
     expect(renderSSR).toHaveBeenCalledTimes(2)
   })
@@ -92,30 +92,30 @@ describe('feedRequests tests', () => {
     const ssrConfigs = [
       {
         config: {
-          url: '/api/v1/api1'
+          url: '/api/v1/api1',
         },
-        cacheKey: 'foo'
-      }
+        cacheKey: 'foo',
+      },
     ]
     const renderSSR = jest.fn().mockReturnValue('<div>Hello World!</div>')
     const context = configure({
       settings: {
         ...copySettings(),
         renderSSR,
-        debug: true
-      }
+        debug: true,
+      },
     })
     const {
       settings: { cache },
-      collection
+      collection,
     } = context
     collection.ssrConfigs = ssrConfigs
     const error = {
       response: {
         data: {
-          message: 'fail'
-        }
-      }
+          message: 'fail',
+        },
+      },
     }
     axiosAll.mockReset().mockRejectedValue(error)
     console.log = jest.fn()
@@ -135,7 +135,7 @@ describe('feedRequests tests', () => {
     )
     expect(ssrHtml).toBe('<div>Hello World!</div>')
     expect(cache.dump()).toEqual([
-      { k: 'foo', v: { error: error.response }, e: 0 }
+      { k: 'foo', v: { error: error.response }, e: 0 },
     ])
     expect(renderSSR).toHaveBeenCalledTimes(1)
   })
@@ -144,25 +144,25 @@ describe('feedRequests tests', () => {
     const ssrConfigs = [
       {
         config: {
-          url: '/api/v1/api1'
+          url: '/api/v1/api1',
         },
-        cacheKey: 'foo'
-      }
+        cacheKey: 'foo',
+      },
     ]
     const renderSSR = jest.fn().mockReturnValue('<div>Hello World!</div>')
     const context = configure({
       settings: {
         ...copySettings(),
-        renderSSR
-      }
+        renderSSR,
+      },
     })
     const {
       settings: { cache },
-      collection
+      collection,
     } = context
     collection.ssrConfigs = ssrConfigs
     const error = {
-      message: 'fail'
+      message: 'fail',
     }
     axiosAll.mockReset().mockRejectedValue(error)
     await expect(feedRequests(context, '')).rejects.toEqual(error)
@@ -175,12 +175,12 @@ describe('feedRequests tests', () => {
     const context = configure({
       settings: {
         ...copySettings(),
-        debug: true
-      }
+        debug: true,
+      },
     })
     console.log = jest.fn()
     const {
-      collection: { ssrConfigs }
+      collection: { ssrConfigs },
     } = context
     const ssrHtml = await feedRequests(context, '')
     expect(console.log).toHaveBeenCalledWith(
@@ -194,17 +194,17 @@ describe('feedRequests tests', () => {
   it('should work as expected if ssr rendering reaches max requests number', async () => {
     const context = configure({
       settings: {
-        ...copySettings()
-      }
+        ...copySettings(),
+      },
     })
     const { collection } = context
     collection.ssrConfigs = [
       {
         config: {
-          url: '/api/v1/foo/bar'
+          url: '/api/v1/foo/bar',
         },
-        cacheKey: ''
-      }
+        cacheKey: '',
+      },
     ]
     await expect(feedRequests(context, '', 0)).rejects.toThrow(
       /Maximum executing times while fetching axios requests/
@@ -230,8 +230,8 @@ describe('injectSSRHtml tests', () => {
     const context = configure({
       settings: {
         ...copySettings(),
-        renderSSR
-      }
+        renderSSR,
+      },
     })
     const { settings, isSSR } = context
     const { cache } = settings
@@ -254,8 +254,8 @@ describe('injectSSRHtml tests', () => {
       settings: {
         ...copySettings(),
         renderSSR,
-        useCacheData: false
-      }
+        useCacheData: false,
+      },
     })
     const { settings } = context
     const { cache } = settings
@@ -273,8 +273,8 @@ describe('injectSSRHtml tests', () => {
     const renderSSR = jest.fn().mockReturnValue(html)
     const context = configure({
       settings: {
-        ...copySettings()
-      }
+        ...copySettings(),
+      },
     })
     const { settings } = context
     const { cache } = settings
@@ -310,8 +310,8 @@ describe('injectSSRHtml tests', () => {
           ) {
             return false
           }
-        }
-      }
+        },
+      },
     })
     const { settings } = context
     const { cache } = settings
@@ -332,40 +332,21 @@ describe('loadApiCache tests', () => {
   it('should work well with cache data', () => {
     const { clientCacheVar, cache } = defaultSettings
     Object.assign(window, {
-      [clientCacheVar]: cacheData
+      [clientCacheVar]: cacheData,
     })
     loadApiCache()
     expect(cache.dump()).toEqual(cacheData)
     expect(window.hasOwnProperty(clientCacheVar)).toBe(false)
   })
 
-  it('should work well with cache data and autoPurgeCache = false', () => {
-    const context = configure({
-      settings: {
-        ...copySettings(),
-        autoPurgeCache: false,
-        clientCacheVar: 'MY_CACHE_VAR'
-      }
-    })
-    const {
-      settings: { clientCacheVar, cache }
-    } = context
-    Object.assign(window, {
-      [clientCacheVar]: cacheData
-    })
-    loadApiCache(context)
-    expect(cache.dump()).toEqual(cacheData)
-    expect(window[clientCacheVar]).toEqual(cacheData)
-  })
-
   it('should nothing happen if there is no cache data', () => {
     const context = configure({
       settings: {
-        ...copySettings()
-      }
+        ...copySettings(),
+      },
     })
     const {
-      settings: { clientCacheVar, cache }
+      settings: { clientCacheVar, cache },
     } = context
     delete window[clientCacheVar]
     loadApiCache(context)

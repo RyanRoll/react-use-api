@@ -7,7 +7,6 @@ import {
   useCallback,
   useRef,
 } from 'react'
-// import invariant from 'invariant'
 
 import { ApiContext } from './context'
 import {
@@ -38,7 +37,8 @@ export function useApi<D = ReactUseApi.Data>(
   }
   const context = useContext(ApiContext)
   const {
-    settings: { cache, debug, shouldUseApiCache },
+    settings,
+    settings: { cache, debug, clearLastCacheWhenConfigChanges },
     isSSR,
     collection: { ssrConfigs, cacheKeys },
   } = context
@@ -49,8 +49,8 @@ export function useApi<D = ReactUseApi.Data>(
         ({
           id: Date.now(),
           isRequesting: false,
-          isFeeding: false,
-          isInitialized: false,
+          isInit: false,
+          hasFed: false,
           refreshFlag: 1,
           cacheKey,
           config,
@@ -58,23 +58,30 @@ export function useApi<D = ReactUseApi.Data>(
       []
     )
   )
-  const options = useMemo(() => handleUseApiOptions(opt, cacheKey), [
-    opt,
-    cacheKey,
-  ])
+  const options = useMemo(
+    () => handleUseApiOptions(opt, settings, config, cacheKey),
+    [opt, settings, cacheKey]
+  )
   const { current: refData } = ref
   const isValidConfig = verifyConfig(config)
   const hasChangedConfig = refData.cacheKey !== cacheKey
+  options.$hasChangedConfig = hasChangedConfig
   if (hasChangedConfig) {
+    if (clearLastCacheWhenConfigChanges) {
+      cache.del(refData.cacheKey)
+    }
     refData.cacheKey = cacheKey
     refData.config = config
+    refData.hasFed = false
   }
+
   // SSR processing
   const cacheData: ReactUseApi.CacheData = cache.get(cacheKey)
-  const { skip } = options
+  const { skip, useCache } = options
   let defaultState = { ...initState }
-  if (!skip) {
-    if (cacheData && (isSSR || !!shouldUseApiCache(config, cacheKey))) {
+
+  if (!skip && !refData.isInit) {
+    if (cacheData && !refData.hasFed && (isSSR || useCache !== false)) {
       const { response, error } = cacheData
       const action = {
         type: ACTIONS.REQUEST_END,
@@ -85,7 +92,7 @@ export function useApi<D = ReactUseApi.Data>(
       debug && console.log('[ReactUseApi][Feed]', cacheKey)
       if (!isSSR) {
         action.fromCache = true
-        refData.isFeeding = true
+        refData.hasFed = true
       }
       defaultState = reducer(defaultState, action)
     } else if (isSSR) {
@@ -100,12 +107,18 @@ export function useApi<D = ReactUseApi.Data>(
     }
   }
 
+  refData.isInit = true
+
   const [state, dispatch] = useReducer(reducer, defaultState)
   const { shouldRequest, watch } = options
   const { loading, data } = state
 
   const request = useCallback(
-    async (cfg = refData.config as ReactUseApi.Config, keepState = false) => {
+    async (
+      cfg = refData.config as ReactUseApi.Config,
+      keepState = false,
+      revalidate = true
+    ) => {
       if (options.skip) {
         return null
       }
@@ -122,7 +135,7 @@ export function useApi<D = ReactUseApi.Data>(
         state.$cacheKey = cacheKey
       }
       refData.isRequesting = true
-      return fetchApi(context, cfg, options, dispatch)
+      return fetchApi(context, cfg, options, dispatch, revalidate)
     },
     [context, cacheKey, options, dispatch, state, refData]
   )
@@ -136,18 +149,21 @@ export function useApi<D = ReactUseApi.Data>(
       return (
         !skip &&
         !refData.isRequesting &&
-        (forRerender
+        ((forRerender
           ? shouldRequestResult === true
-          : shouldRequestResult !== false) // false means skip
+          : // false means skip
+            shouldRequestResult !== false) ||
+          hasChangedConfig)
       )
     },
-    [skip, refData, shouldRequest]
+    [skip, refData, shouldRequest, hasChangedConfig]
   )
 
   // for each re-rendering
   if (shouldFetchApi(true)) {
     refData.refreshFlag = Date.now()
   }
+
   if (!loading && refData.isRequesting) {
     refData.isRequesting = false
   }
@@ -167,15 +183,20 @@ export function useApi<D = ReactUseApi.Data>(
   effect(() => {
     // SSR will never invoke request() due to the following cases:
     // 1. There is a cacheData for the cacheKey
-    // 2. Feeding the data come from the cache
+    // 2. Feeding the data come from the cache (using defaultState)
+    // 3. Calling API forcibly due to useCache=false
     // For non-SSR, cacheData will be undefined if cacheKey has been changed
-    if (!isSSR && !cacheData && !refData.isFeeding) {
-      request()
+
+    if (!isSSR && !refData.hasFed) {
+      request(undefined, undefined, false)
     }
-    if (refData.isFeeding) {
-      refData.isFeeding = false
-    }
-  }, [cacheKey, refData.refreshFlag, ...(Array.isArray(watch) ? watch : [])])
+  }, [
+    cacheKey,
+    useCache,
+    refData,
+    refData.refreshFlag,
+    ...(Array.isArray(watch) ? watch : []),
+  ])
 
   if (!isValidConfig) {
     return [undefined, undefined, undefined]
@@ -207,7 +228,7 @@ export const reducer = (
       const { response, error, fromCache } = action
       const { prevState: pre, ...prevState } = state
       const { data: prevData } = prevState
-      const { dependencies } = options
+      const { dependencies, $hasChangedConfig } = options
       const newState = {
         ...prevState,
         prevData,
@@ -218,6 +239,10 @@ export const reducer = (
         error,
         fromCache: !!fromCache,
         ...basicState,
+      }
+      if ($hasChangedConfig) {
+        delete newState.prevState
+        delete newState.prevData
       }
       newState.data = error ? undefined : getResponseData(options, newState)
       return newState
@@ -231,28 +256,61 @@ export const fetchApi = async (
   context: ReactUseApi.Context,
   config: ReactUseApi.Config,
   options: ReactUseApi.Options,
-  dispatch: React.Dispatch<ReactUseApi.Action>
+  dispatch: React.Dispatch<ReactUseApi.Action>,
+  revalidate = false
 ) => {
   const {
     settings: { cache },
   } = context
-  const cacheKey = options.$cacheKey
+  const { $cacheKey: cacheKey, useCache } = options
+  const promiseKey = `${cacheKey}::promise`
+  let { response, error } = {} as ReactUseApi.CacheData
   try {
-    let { response, error } =
-      cache.get(cacheKey) || ({} as ReactUseApi.CacheData)
-    if (response || error) {
-      cache.del(cacheKey)
+    const cacheData = cache.get(cacheKey)
+    let promise = cache.get(promiseKey)
+    response = cacheData?.response
+    error = cacheData?.error
+    let fromCache = !revalidate
+    if (revalidate) {
+      dispatch({ type: ACTIONS.REQUEST_START, options })
+      response = await axiosAll(context, config)
+    } else if (useCache !== false && promise) {
+      dispatch({ type: ACTIONS.REQUEST_START, options })
+      response = await promise
+    } else if (useCache !== false && (response || error)) {
+      // skip ACTIONS.REQUEST_START
+    } else if (useCache) {
+      dispatch({ type: ACTIONS.REQUEST_START, options })
+      promise = axiosAll(context, config)
+      // save promise for next coming hooks
+      cache.set(promiseKey, promise)
+      response = await promise
     } else {
+      fromCache = false
       dispatch({ type: ACTIONS.REQUEST_START, options })
       response = await axiosAll(context, config)
     }
-    dispatch({ type: ACTIONS.REQUEST_END, response, error, options })
-  } catch (error) {
+    dispatch({ type: ACTIONS.REQUEST_END, response, error, options, fromCache })
+  } catch (err) {
+    error = err
     dispatch({
       type: ACTIONS.REQUEST_END,
       error,
       options,
     })
+  } finally {
+    // save the data if there is no cache data come from server
+    if (useCache) {
+      if (!cache.has(cacheKey)) {
+        cache.set(cacheKey, {
+          response,
+          error,
+        })
+      }
+      if (cache.has(promiseKey)) {
+        cache.del(promiseKey)
+      }
+    }
   }
 }
 
@@ -261,6 +319,8 @@ export const handleUseApiOptions = (
     | ReactUseApi.Options
     | ReactUseApi.Options['handleData']
     | ReactUseApi.Options['watch'],
+  settings: ReactUseApi.Settings,
+  config: ReactUseApi.Config | string,
   cacheKey: string
 ) => {
   const options = isObject(opt)
@@ -269,7 +329,16 @@ export const handleUseApiOptions = (
         watch: Array.isArray(opt) ? opt : [],
         handleData: isFunction(opt) ? opt : undefined,
       } as ReactUseApi.Options)
+
   options.$cacheKey = cacheKey
+  const { alwaysUseCache, shouldUseApiCache } = settings
+  const globalUseCache =
+    shouldUseApiCache(config as ReactUseApi.Config, cacheKey) !== false
+  if (alwaysUseCache) {
+    options.useCache = true
+  } else if (globalUseCache === false) {
+    options.useCache = false
+  }
   return options
 }
 

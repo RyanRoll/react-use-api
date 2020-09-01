@@ -12,10 +12,10 @@ import {
   getResponseData,
   isObject,
   isFunction,
-  isNil
+  isNil,
 } from '../common'
 
-const noop = function() {}
+const noop = function () {}
 
 describe('configure tests', () => {
   it('should configure work without custom settings', () => {
@@ -24,11 +24,11 @@ describe('configure tests', () => {
       settings,
       collection: { ssrConfigs, cacheKeys },
       isSSR,
-      isConfigured
+      isConfigured,
     } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
-      cache: new LRU()
+      cache: new LRU(),
     })
     expect(ssrConfigs.length).toBe(0)
     expect(cacheKeys.size).toBe(0)
@@ -42,7 +42,7 @@ describe('configure tests', () => {
     const { settings, isSSR } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
-      cache: new LRU()
+      cache: new LRU(),
     })
     expect(isSSR).toBe(true)
   })
@@ -57,28 +57,29 @@ describe('configure tests', () => {
         cache: new LRU<string, ReactUseApi.CacheData>(),
         maxRequests: 100,
         useCacheData: false,
+        alwaysUseCache: true,
         deleteAfterLoading: false,
         renderSSR: () => '',
         isSSR: () => true,
-        shouldUseApiCache: () => false
+        shouldUseApiCache: () => false,
       },
       collection: {
         ssrConfigs: customSSRConfig,
-        cacheKeys: customCacheKeys
+        cacheKeys: customCacheKeys,
       },
       isSSR: false,
-      isConfigured: false
+      isConfigured: false,
     }
     const context = configure(custom)
     const {
       settings,
       collection: { ssrConfigs, cacheKeys },
       isSSR,
-      isConfigured
+      isConfigured,
     } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
-      ...custom.settings
+      ...custom.settings,
     })
     expect(settings).not.toBe(defaultSettings)
     expect(ssrConfigs).not.toBe(customSSRConfig)
@@ -93,13 +94,13 @@ describe('axiosAll tests', () => {
   const context = configure({})
   const url = '/foo'
   const data = {
-    foo: 'bar'
+    foo: 'bar',
   }
   mock.onGet(url).reply(200, data)
 
   it('should a single api request work well', async () => {
     const config: ReactUseApi.Config = {
-      url
+      url,
     }
     const response = await axiosAll(context, config)
     expect(Array.isArray(response)).toBe(false)
@@ -109,11 +110,11 @@ describe('axiosAll tests', () => {
   it('should the multiple api requests work well', async () => {
     const config: ReactUseApi.MultiConfigs = [
       {
-        url
+        url,
       },
       {
-        url
-      }
+        url,
+      },
     ]
     const responses = await axiosAll(context, config)
     expect(Array.isArray(responses)).toBe(true)
@@ -123,11 +124,11 @@ describe('axiosAll tests', () => {
 
   it('should an api request work failed', async () => {
     const errorData = {
-      message: 'Error!'
+      message: 'Error!',
     }
     mock.onGet(url).reply(500, errorData)
     const config: ReactUseApi.Config = {
-      url
+      url,
     }
     expect.assertions(1)
     try {
@@ -145,7 +146,7 @@ it('should tidyResponse work well', () => {
     data: {},
     status: 200,
     statusText: 'ok',
-    headers: {}
+    headers: {},
   }
   const tidied = tidyResponse(response)
   expect(tidied.config).toBeUndefined()
@@ -155,13 +156,13 @@ it('should tidyResponse work well', () => {
 describe('getResponseData tests', () => {
   it('should getResponseData work well with single response', () => {
     const data = {
-      foo: 'bar'
+      foo: 'bar',
     }
     const newData = {
-      abc: 'def'
+      abc: 'def',
     }
     const options: ReactUseApi.Options = {
-      handleData: jest.fn().mockReturnValue(newData)
+      handleData: jest.fn().mockReturnValue(newData),
     }
     const state: ReactUseApi.State = {
       response: {
@@ -170,11 +171,11 @@ describe('getResponseData tests', () => {
         request: {},
         status: 200,
         statusText: 'ok',
-        headers: {}
+        headers: {},
       },
       loading: false,
       fromCache: false,
-      $cacheKey: 'foo/bar'
+      $cacheKey: 'foo/bar',
     }
     const returnedData = getResponseData(options, state)
     expect(options.handleData).toHaveBeenLastCalledWith(data, state)
@@ -184,22 +185,22 @@ describe('getResponseData tests', () => {
   it('should getResponseData work well with multiple responses', () => {
     const data = [
       {
-        foo: 'bar'
+        foo: 'bar',
       },
       {
-        foo: 'bar'
-      }
+        foo: 'bar',
+      },
     ]
     const newData = [
       {
-        abc: 'def'
+        abc: 'def',
       },
       {
-        abc: 'def'
-      }
+        abc: 'def',
+      },
     ]
     const options: ReactUseApi.Options = {
-      handleData: jest.fn().mockReturnValue(newData)
+      handleData: jest.fn().mockReturnValue(newData),
     }
     const state: ReactUseApi.State = {
       response: [
@@ -209,7 +210,7 @@ describe('getResponseData tests', () => {
           request: {},
           status: 200,
           statusText: 'ok',
-          headers: {}
+          headers: {},
         },
         {
           data: data[1],
@@ -217,12 +218,12 @@ describe('getResponseData tests', () => {
           request: {},
           status: 200,
           statusText: 'ok',
-          headers: {}
-        }
+          headers: {},
+        },
       ],
       loading: false,
       fromCache: false,
-      $cacheKey: 'foo/bar'
+      $cacheKey: 'foo/bar',
     }
     const returnedData = getResponseData(options, state)
     expect(options.handleData).toHaveBeenLastCalledWith(data, state)

@@ -7,7 +7,7 @@ export const feedRequests = async (
 ) => {
   const {
     settings,
-    collection: { ssrConfigs, cacheKeys }
+    collection: { ssrConfigs, cacheKeys },
   } = context
   const { cache, renderSSR, debug } = settings
   if (!ssrConfigs.length) {
@@ -40,14 +40,14 @@ export const feedRequests = async (
       debug && console.log('[ReactUseApi][Fetch]', cacheKey)
       const response = await axiosAll(context, config)
       cache.set(cacheKey, {
-        response
+        response,
       })
     } catch (error) {
       // is an axios error
       if (error.response && error.response.data) {
         cache.set(cacheKey, {
           // should not be error (Error) object in SSR, it will lead an error: Converting circular structure to JSON
-          error: error.response
+          error: error.response,
         })
       } else {
         throw error
@@ -100,12 +100,10 @@ export const loadApiCache = (
   context: ReactUseApi.Context = { settings: defaultSettings }
 ) => {
   const { settings } = context
-  const { clientCacheVar, autoPurgeCache } = settings
+  const { clientCacheVar } = settings
   const data = window[clientCacheVar]
   if (Array.isArray(data)) {
     settings.cache.load(data)
-    if (autoPurgeCache) {
-      delete window[clientCacheVar]
-    }
+    delete window[clientCacheVar]
   }
 }

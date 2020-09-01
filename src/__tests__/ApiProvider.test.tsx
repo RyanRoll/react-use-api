@@ -26,7 +26,7 @@ describe('ApiProvider tests', () => {
     const { settings, isSSR } = context
     expect(settings).toMatchObject({
       ...defaultSettings,
-      cache: new LRU()
+      cache: new LRU(),
     })
     expect(isSSR).toBe(false) // window exists in jest
     expect(testRenderer.toJSON()).toMatchSnapshot()
@@ -37,8 +37,8 @@ describe('ApiProvider tests', () => {
     cache.set('foo', 'bar')
     const context: ReactUseApi.CustomContext = {
       settings: {
-        cache
-      }
+        cache,
+      },
     }
     let testRenderer: TestRenderer.ReactTestRenderer
     TestRenderer.act(() => {
@@ -50,9 +50,8 @@ describe('ApiProvider tests', () => {
     expect(instance.props.context).toBe(context)
     expect(settings).toMatchObject({
       ...defaultSettings,
-      cache
+      cache,
     })
     expect(isSSR).toBe(false) // window exists in jest
-    expect(cache.keys().length).toEqual(0)
   })
 })

@@ -23,10 +23,11 @@ declare namespace ReactUseApi {
 
   interface Context {
     settings?: Settings
-    renderSSR?: Settings['renderSSR']
     isSSR?: boolean
     collection?: SSRCollection
     isConfigured?: boolean
+    renderSSR?: Settings['renderSSR']
+    clearCache?: () => void
   }
   interface CustomContext extends Omit<Context, 'settings'> {
     settings?: CustomSettings
@@ -46,7 +47,9 @@ declare namespace ReactUseApi {
     watch?: any[]
     dependencies?: dependencies
     skip?: boolean
+    useCache?: boolean
     $cacheKey?: string
+    $hasChangedConfig?: boolean
     handleData?: (data: Data, newState: State) => any
     shouldRequest?: () => boolean | void
   }
@@ -76,10 +79,11 @@ declare namespace ReactUseApi {
     state: State
     config: Config
     refreshFlag: number
+    isInit: boolean
     isRequesting: boolean
-    isInitialized: boolean
-    isFeeding: boolean
+    hasFed: boolean
     timeoutID: number
+    useCache: boolean
     // options: Options // debug only
   }
 

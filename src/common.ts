@@ -6,8 +6,9 @@ export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
   maxRequests: 50,
-  autoPurgeCache: true,
-  useCacheData: true,
+  useCacheData: true, // whether to use the cached api data come from server
+  alwaysUseCache: false, // whether to use the cached api data always for each api call
+  clearLastCacheWhenConfigChanges: true,
   debug: false,
   clientCacheVar: '__USE_API_CACHE__',
   isSSR: (...args: any[]): boolean | void => typeof window === 'undefined',
@@ -17,16 +18,16 @@ export const defaultSettings = {
   shouldUseApiCache: (
     config?: ReactUseApi.Config,
     cacheKey?: string
-  ): boolean | void => true
+  ): boolean | void => true,
 }
 export const ACTIONS = {
   REQUEST_START: 'REQUEST_START',
-  REQUEST_END: 'REQUEST_END'
+  REQUEST_END: 'REQUEST_END',
 }
 export const initState = {
   loading: false,
   fromCache: false,
-  $cacheKey: ''
+  $cacheKey: '',
 }
 
 export const configure = (
@@ -55,8 +56,11 @@ export const configure = (
     isConfigured: true,
     collection: {
       ssrConfigs: [],
-      cacheKeys: new Set<string>()
-    } as ReactUseApi.SSRCollection
+      cacheKeys: new Set<string>(),
+    } as ReactUseApi.SSRCollection,
+    clearCache() {
+      settings?.cache?.reset()
+    },
   })
   return context as ReactUseApi.Context
 }
@@ -74,12 +78,12 @@ export async function axiosAll(
   config: ReactUseApi.Config | ReactUseApi.MultiConfigs
 ): Promise<ReactUseApi.ApiResponse | ReactUseApi.ApiResponse[]> {
   const {
-    settings: { axios: client }
+    settings: { axios: client },
   } = context
   const isMulti = Array.isArray(config)
   const requests = ((isMulti
     ? config
-    : [config]) as ReactUseApi.MultiConfigs).map(cfg => client(cfg))
+    : [config]) as ReactUseApi.MultiConfigs).map((cfg) => client(cfg))
   try {
     const responses = await Promise.all<ReactUseApi.ApiResponse>(requests)
     responses.forEach(tidyResponse)
@@ -110,7 +114,7 @@ export const getResponseData = (
   const { response } = state
   const isMultiApis = Array.isArray(response)
   let data = isMultiApis
-    ? (response as ReactUseApi.ApiResponse[]).map(each => each.data)
+    ? (response as ReactUseApi.ApiResponse[]).map((each) => each.data)
     : (response as ReactUseApi.ApiResponse).data
   const { handleData } = options
   if (isFunction(handleData)) {
