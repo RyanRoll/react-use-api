@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/RyanRoll/react-use-api/compare/v2.4.1...v2.5.0) (2020-09-14)
+
+
+### Features
+
+* **useCache:** update readme and provide more details ([#19](https://github.com/RyanRoll/react-use-api/issues/19)) ([e1485ac](https://github.com/RyanRoll/react-use-api/commit/e1485ac71d3595f71b1dab8fb8dafb9115960bea))
+
 ## [2.4.1](https://github.com/RyanRoll/react-use-api/compare/v2.4.0...v2.4.1) (2020-09-01)
 
 
