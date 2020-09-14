@@ -33,10 +33,6 @@ $ npm i react-use-api axios
 $ yarn add react-use-api axios
 ```
 
-## Gitbook Document
-
-[https://react-use-api.gitbook.io/react-use-api/](https://react-use-api.gitbook.io/react-use-api/)
-
 ## Usage
 
 ### Setup With ApiProvider
@@ -451,19 +447,19 @@ export const render = async (req, axios) => {
 
 _Each property is optional_
 
-| Name                            | Type                                      | Default                                                   | Description                                                                                                                                             |
-| ------------------------------- | ----------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| cache                           | LRU<String, ReactUseApi.CacheData \| any> | new LRU()                                                 | The cache instance based on lru-cache                                                                                                                   |
-| axios                           | AxiosStatic \| AxiosInstance              | axios                                                     | axios instance (http client)                                                                                                                            |
-| maxRequests                     | number                                    | 50                                                        | The maximum of API requests when SSR                                                                                                                    |
-| useCacheData                    | boolean                                   | true                                                      | Set true to inject JS cache data into html when calling `injectSSRHtml()`                                                                               |
-| alwaysUseCache                  | boolean                                   | false                                                     | Set true to use cache data always (equivalent to `options.useCache = true`)                                                                             |
-| clearLastCacheWhenConfigChanges | boolean                                   | true                                                      | This is default behavior that the cached data will be removed as long as the url config of useApi has been changed. Set false to remain the cached data |
-| debug                           | boolean                                   | true                                                      | Set true to get debug message from console                                                                                                              |
-| clientCacheVar                  | string                                    | 'USE_API_CACHE'                                           | The JS variable name of cache data                                                                                                                      |
-| renderSSR                       | Function                                  | () => ''                                                  | A callback to render SSR string for injectSSRHtml()                                                                                                     |
-| isSSR                           | Function                                  | () => typeof window === 'undefined'                       | A function to determine if the current environment is server                                                                                            |
-| shouldUseApiCache               | Function                                  | (config?: ReactUseApi.Config, cacheKey?: string): boolean | Returns true to enable useApi to get the API data from API cache, which is loaded by `loadApiCache`. Default is true                                    |
+| Name                            | Type                                      | Default                                                   | Description                                                                                                                                       |
+| ------------------------------- | ----------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cache                           | LRU<String, ReactUseApi.CacheData \| any> | new LRU()                                                 | The cache instance based on lru-cache                                                                                                             |
+| axios                           | AxiosStatic \| AxiosInstance              | axios                                                     | axios instance (http client)                                                                                                                      |
+| maxRequests                     | number                                    | 50                                                        | The maximum of API requests when SSR                                                                                                              |
+| useCacheData                    | boolean                                   | true                                                      | Set true to inject JS cache data into html when calling `injectSSRHtml()`                                                                         |
+| alwaysUseCache                  | boolean                                   | false                                                     | Set true to use cache data always (equivalent to `options.useCache = true`)                                                                       |
+| clearLastCacheWhenConfigChanges | boolean                                   | true                                                      | This is default behavior that the cached data will be removed once the url config of useApi has been changed. Set false to remain the cached data |
+| debug                           | boolean                                   | true                                                      | Set true to get debug message from console                                                                                                        |
+| clientCacheVar                  | string                                    | 'USE_API_CACHE'                                           | The JS variable name of cache data                                                                                                                |
+| renderSSR                       | Function                                  | () => ''                                                  | A callback to render SSR string for injectSSRHtml()                                                                                               |
+| isSSR                           | Function                                  | () => typeof window === 'undefined'                       | A function to determine if the current environment is server                                                                                      |
+| shouldUseApiCache               | Function                                  | (config?: ReactUseApi.Config, cacheKey?: string): boolean | Returns true to enable useApi to get the API data from API cache, which is loaded by `loadApiCache`. Default is true                              |
 
 #### Arguments of injectSSRHtml
 
