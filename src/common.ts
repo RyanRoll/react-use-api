@@ -5,20 +5,18 @@ import LRU from 'lru-cache'
 export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
-  maxRequests: 50,
+  maxRequests: 50, // max requests count when running ReactDom.renderToString in SSR
   useCacheData: true, // whether to use the cached api data come from server
   alwaysUseCache: false, // whether to use the cached api data always for each api call
-  clearLastCacheWhenConfigChanges: true,
+  clearLastCacheWhenConfigChanges: true, // clear the last cache data with the last config when the config changes
   debug: false,
-  clientCacheVar: '__USE_API_CACHE__',
+  clientCacheVar: '__USE_API_CACHE__', // the property name of window to save the cached api data come from server side
   isSSR: (...args: any[]): boolean | void => typeof window === 'undefined',
-  renderSSR: (...args: any[]): string => '',
-  // skip: (config?: ReactUseApi.Config, cacheKey?: string): boolean | void =>
-  //   false,
+  renderSSR: (...args: any[]): string => '', // a callback to render SSR HTML string
   shouldUseApiCache: (
     config?: ReactUseApi.Config,
     cacheKey?: string
-  ): boolean | void => true,
+  ): boolean | void => true, // a callback to decide whether to use the cached api data
 }
 export const ACTIONS = {
   REQUEST_START: 'REQUEST_START',
