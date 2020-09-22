@@ -5,7 +5,7 @@ import LRU from 'lru-cache'
 export const defaultSettings = {
   cache: new LRU<string, ReactUseApi.CacheData | any>(),
   axios: axios as AxiosStatic | AxiosInstance,
-  maxRequests: 50, // max requests count when running ReactDom.renderToString in SSR
+  maxRequests: 100, // max requests count when running ReactDom.renderToString in SSR
   useCacheData: true, // whether to use the cached api data come from server
   alwaysUseCache: false, // whether to use the cached api data always for each api call
   clearLastCacheWhenConfigChanges: true, // clear the last cache data with the last config when the config changes

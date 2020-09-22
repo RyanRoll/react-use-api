@@ -14,7 +14,7 @@ export const feedRequests = async (
     if (debug) {
       console.log('[ReactUseApi][Requests Count] =', cacheKeys.size)
       console.log(
-        '[ReactUseApi][Executed times] =',
+        '[ReactUseApi][Executed Times] =',
         settings.maxRequests - maxRequests
       )
     }
@@ -23,7 +23,15 @@ export const feedRequests = async (
   }
   debug && console.log('[ReactUseApi][Collecting Requests]')
   if (maxRequests === 0) {
-    throw new Error('Maximum executing times while fetching axios requests')
+    console.error(
+      '[ReactUseApi][ERROR] - Maximum executing times while fetching axios requests',
+      '[congis]:',
+      ssrConfigs,
+      '[Executed Times]:',
+      settings.maxRequests - maxRequests
+    )
+    cacheKeys.clear()
+    return ssrHtml // done
   }
 
   // The algorithm is collecting the unobtained API request config from the previous renderSSR()
@@ -44,7 +52,7 @@ export const feedRequests = async (
       })
     } catch (error) {
       // is an axios error
-      if (error.response && error.response.data) {
+      if (error?.response?.data) {
         cache.set(cacheKey, {
           // should not be error (Error) object in SSR, it will lead an error: Converting circular structure to JSON
           error: error.response,

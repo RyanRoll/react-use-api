@@ -14,6 +14,7 @@ jest.mock('../common', () => {
 
 const { feedRequests, injectSSRHtml, loadApiCache } = ssrModule
 const originalLog = console.log
+const originalErrorLog = console.error
 
 beforeEach(() => {
   jest.resetModules()
@@ -21,6 +22,7 @@ beforeEach(() => {
 
 afterEach(() => {
   console.log = originalLog
+  console.error = originalErrorLog
 })
 
 const copySettings = () => ({
@@ -130,7 +132,7 @@ describe('feedRequests tests', () => {
       0
     )
     expect(console.log).toHaveBeenCalledWith(
-      '[ReactUseApi][Executed times] =',
+      '[ReactUseApi][Executed Times] =',
       1
     )
     expect(ssrHtml).toBe('<div>Hello World!</div>')
@@ -184,7 +186,7 @@ describe('feedRequests tests', () => {
     } = context
     const ssrHtml = await feedRequests(context, '')
     expect(console.log).toHaveBeenCalledWith(
-      '[ReactUseApi][Executed times] =',
+      '[ReactUseApi][Executed Times] =',
       0
     )
     expect(ssrConfigs.length).toBe(0)
@@ -206,8 +208,10 @@ describe('feedRequests tests', () => {
         cacheKey: '',
       },
     ]
-    await expect(feedRequests(context, '', 0)).rejects.toThrow(
-      /Maximum executing times while fetching axios requests/
+    console.error = jest.fn()
+    await feedRequests(context, '', 0)
+    expect(console.error.mock.calls[0][0]).toEqual(
+      '[ReactUseApi][ERROR] - Maximum executing times while fetching axios requests'
     )
   })
 })
