@@ -1,3 +1,10 @@
+## [2.5.1](https://github.com/RyanRoll/react-use-api/compare/v2.5.0...v2.5.1) (2020-09-22)
+
+
+### Bug Fixes
+
+* **SSR:** show console error instead of throw errors for Maximum executing times while fetching axio ([ea839f4](https://github.com/RyanRoll/react-use-api/commit/ea839f4a8e6127bba912d51ada50c1a98efa4fcb))
+
 # [2.5.0](https://github.com/RyanRoll/react-use-api/compare/v2.4.1...v2.5.0) (2020-09-14)
 
 
