@@ -404,7 +404,7 @@ Please be aware that no lifecycle methods will be invoked when SSR.
 ```tsx
 // server/render.js (based on Express framework)
 import React from 'react'
-import ReactDom from 'react-dom'
+import ReactDomServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom'
 import { ApiProvider, injectSSRHtml } from 'react-use-api'
 
@@ -421,7 +421,7 @@ export const render = async (req, axios) => {
   }
   const routerContext = {}
   const renderSSR = () =>
-    ReactDom.renderToString(
+    ReactDomServer.renderToString(
       <ApiProvider context={apiContext}>
         <StaticRouter location={url} context={routerContext}>
           <App />
