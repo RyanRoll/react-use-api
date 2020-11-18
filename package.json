@@ -80,7 +80,7 @@
     "react-app-polyfill": "^1.0.1",
     "react-dom": "^16.9.0",
     "react-test-renderer": "^16.8.6",
-    "semantic-release": "^15.13.21",
+    "semantic-release": "^17.2.3",
     "shx": "^0.3.2",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
